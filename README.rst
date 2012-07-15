@@ -40,3 +40,23 @@ References
   Object Oriented wrapper for LibUSB
   https://github.com/hansiglaser/pas-libusb
 
+These projects are referenced using `Git Submodules
+<http://git-scm.com/book/en/Git-Tools-Submodules>`_. To clone this project,
+you have to add the submodules too.
+
+::
+
+  git clone https://github.com/hansiglaser/eztool.git
+  cd eztool
+  git submodule init
+  git submodule update
+
+To update a submodule with its most up-to-date state, two steps are necessary.
+
+::
+
+  git merge origin/master    # to update the pointer
+  git submodule update       # to actually get the sources
+
+
+
