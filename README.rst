@@ -55,8 +55,11 @@ To update a submodule with its most up-to-date state, two steps are necessary.
 
 ::
 
-  git merge origin/master    # to update the pointer
-  git submodule update       # to actually get the sources
+  cd ./host/pas-tcl
+  git merge origin/master    # to get teh newest revision
+  cd ../..
+  git add host/pas-tcl       # to stage the update
+  git commit                 # to update the pointer
 
 
 
