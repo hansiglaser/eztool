@@ -61,5 +61,27 @@ To update a submodule with its most up-to-date state, two steps are necessary.
   git add host/pas-tcl       # to stage the update
   git commit                 # to update the pointer
 
+To change a submodule within this main project and then commit and push to
+GitHub.
 
+TODO
+
+If changes in a submodule within this main project were made and committed,
+some hand crafting is necessary, becaus the commit created a revision
+detached from "master".
+
+::
+
+  git submodule              # shows a list of submodules including their SHA-1
+  cd host/pas-tcl
+  git checkout master        # switch to master branch
+  git cherry-pick 8ec7179    # and get all the changes from the "wild" commit
+  git push                   # now they can be pushed to GitHub
+  cd ../..
+  git submodule              # shows that submodules are at a newer state than
+                             # referenced by the main project
+  git add host/pas-tcl       # tell git to use the most current revision of
+                             # this submodule
+  git commit                 # commit
+  git push                   # and push to GitHub
 
