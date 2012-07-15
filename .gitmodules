@@ -1,3 +1,6 @@
 [submodule "host/pas-readline"]
 	path = host/pas-readline
 	url = https://github.com/hansiglaser/pas-readline.git
+[submodule "host/pas-tcl"]
+	path = host/pas-tcl
+	url = https://github.com/hansiglaser/pas-tcl.git
