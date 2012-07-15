@@ -21,6 +21,7 @@
 
 #include "io.h"
 #include "usb.h"
+#include "i2c.h"
 #include "commands.h"
 
 /**
@@ -43,7 +44,7 @@
  * ISR vector (here 13) to "reserve" that space.
  */
 // I2C
-//extern void i2c_isr(void)      __interrupt I2C_VECT;
+extern void i2c_isr(void)      __interrupt I2C_VECTOR;
 // USB
 extern void sudav_isr(void)    __interrupt SUDAV_ISR;
 extern void sof_isr(void)      __interrupt;
@@ -68,42 +69,14 @@ extern void ep6out_isr(void)   __interrupt;
 extern void ep7in_isr(void)    __interrupt;
 extern void ep7out_isr(void)   __interrupt;
 
-static void io_init(void) {
-  /* PORTxCFG register bits select alternate functions (1 == alternate function,
-   *                                                    0 == standard I/O)
-   * OEx register bits turn on/off output buffer (1 == output, 0 == input)
-   * OUTx register bits determine pin state of output
-   * PINx register bits reflect pin state (high == 1, low == 0) */
-
-  /* Port A: ... */
-  PORTACFG = PORTA_SPECIAL_FUNC;
-  OEA      = PORTA_OE;
-  OUTA     = PORTA_INIT;
-
-  /* Port B: ... */
-  PORTBCFG = PORTB_SPECIAL_FUNC;
-  OEB      = PORTB_OE;
-  OUTB     = PORTB_INIT;
-
-  /* Port C: ... */
-  PORTCCFG = PORTC_SPECIAL_FUNC;
-  OEC      = PORTC_OE;
-  OUTC     = PORTC_INIT;
-
-  /* Enable CLK24 output */
-  CPUCS |= CLK24OE;
-
-  /* External Memory Interface Wait States for Fast Read */
-  CKCON = 0x00;      // CKCON[2..0]: 0 wait states
-}
-
 int main(void) {
-  io_init();
+  // IOs are not initialized
   usb_init();
+  i2c_init();
 
   /* Globally enable interrupts */
   EA = 1;
-
+  
   /* Begin executing command(s). This function never returns. */
   command_loop();
 

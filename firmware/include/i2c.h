@@ -17,45 +17,18 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#ifndef __COMMANDS_H
-#define __COMMANDS_H
+#ifndef __I2C_H
+#define __I2C_H
 
-#include <stdbool.h>
 #include <stdint.h>
 
-/*
- * Command definition
- */
-#define CMD_GET_VERSION   0x80
-#define CMD_GET_STATUS    0x81
-#define CMD_SETUP_IOPORT  0x82    // PORTxCFG and OEx
-#define CMD_SET_IOPORT    0x83    // write OUTx
-#define CMD_GET_IOPORT    0x84    // read INx
-#define CMD_READ_EEPROM   0x85    // read from EEPROM
-#define CMD_WRITE_EEPROM  0x86    // write to EEPROM
-#define CMD_READ_XDATA    0x87    // read from XDATA
-#define CMD_WRITE_XDATA   0x88    // write to XDATA
-// TODO: other I2C stuff, other peripherals (UART, ...), external memory, ...
-// 0xA0 .. 0xAF are reserved by Anchor / Cypress
+typedef enum {I2C_OK,I2C_BUSY,I2C_BERROR,I2C_NACK} I2C_Status;
 
-/* Command: GetVersion ******************************************************/
-typedef struct {
-  uint16_t Firmware;     // Firmware Version
-  // ... add further fields, e.g. version of linked libraries, external
-  // devices, ... and fill these fields in GetVersion() in commands.c ...
-} TGetVersion;
+void i2c_init();
+I2C_Status i2c_start_read (uint8_t addr, uint8_t length, __xdata uint8_t* ptr);
+I2C_Status i2c_start_write(uint8_t addr, uint8_t length, __xdata uint8_t* ptr);
+I2C_Status i2c_read (uint8_t addr, uint8_t length, __xdata uint8_t* ptr);
+I2C_Status i2c_write(uint8_t addr, uint8_t length, __xdata uint8_t* ptr);
 
-#define FIRMWARE_VERSION 0x0001   // 0x00 . 0x01 -> 0.1
+#endif  // __I2C_H
 
-/* Command: GetStatus *******************************************************/
-typedef struct {
-  uint8_t  MyStatus;     // dummy field
-  // ... add further fields with various status information and fill these
-  // fields in GetStatus() in commands.c ...
-} TGetStatus;
-
-/* Common *******************************************************************/
-
-void command_loop(void);
-
-#endif  // __COMMANDS_H
