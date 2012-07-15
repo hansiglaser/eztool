@@ -4,3 +4,6 @@
 [submodule "host/pas-tcl"]
 	path = host/pas-tcl
 	url = https://github.com/hansiglaser/pas-tcl.git
+[submodule "host/pas-libusb"]
+	path = host/pas-libusb
+	url = https://github.com/hansiglaser/pas-libusb.git
