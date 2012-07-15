@@ -85,3 +85,24 @@ detached from "master".
   git commit                 # commit
   git push                   # and push to GitHub
 
+See als
+ - http://blog.jacius.info/2009/08/09/your-git-submodule-and-you/
+ - http://longweekendmobile.com/2010/11/05/making-changes-in-a-git-submodule-made-simple/
+ - https://git.wiki.kernel.org/index.php/GitSubmoduleTutorial
+
+**ezusb-firmware**
+  Firmware skeleton for the Cypress EZ-USB microcontroller
+  https://github.com/hansiglaser/ezusb-firmware.git
+
+This can either be used with the `git subtree merge
+<http://git-scm.com/book/en/Git-Tools-Subtree-Merging>`_ or simply by
+downloading the current release from GitHub.
+
+::
+
+  git clone https://github.com/hansiglaser/ezusb-firmware.git firmware
+  cd firmware/
+  rm -rf .git
+  cd ..
+  git add firmware
+
