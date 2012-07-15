@@ -76,7 +76,7 @@ int main(void) {
 
   /* Globally enable interrupts */
   EA = 1;
-  
+
   /* Begin executing command(s). This function never returns. */
   command_loop();
 

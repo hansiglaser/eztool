@@ -40,9 +40,78 @@ References
   Object Oriented wrapper for LibUSB
   https://github.com/hansiglaser/pas-libusb
 
-These projects are referenced using `Git Submodules
-<http://git-scm.com/book/en/Git-Tools-Submodules>`_. To clone this project,
-you have to add the submodules too.
+**ezusb-firmware**
+  Firmware skeleton for the Cypress EZ-USB microcontroller
+  https://github.com/hansiglaser/ezusb-firmware.git
+
+Directory Structure
+-------------------
+
+  ``host/``
+    Host application base directory
+
+  ``host/src/``
+    Host applicatione source code. This directory has a ``Makefile``.
+
+  ``host/pas-readline``
+    Git Submodule: Object Oriented wrapper for GNU Readline for Pascal
+
+  ``host/pas-tcl``
+    Git Submodule: Object Oriented wrapper for TCL for Pascal
+
+  ``host/pas-libusb``
+    Git Submodule: Object Oriented wrapper for LibUSB
+
+  ``firmware``
+    EZ-USB device firmware. This directory has a ``Makefile``.
+
+Build
+-----
+
+The host application is written in Pascal using `FreePascal
+<http://www.freepascal.org/>`_ 2.6.0 on Linux.
+
+To compile the firmware, the `SDCC compiler package
+<http://sdcc.sourceforge.net/>`_ is required. Most Linux
+distributions include SDCC in their official package repositories. The SDCC
+source code can be found at http://sdcc.sourceforge.net/
+Simply type "make hex" in the firmware directory to compile.
+"make clean" will remove all generated files except the Intel HEX file required
+for downloading the firmware to the EZ-USB device.
+
+::
+
+  $ cd firmware/
+  $ make
+
+This builds the device firmware which is used by the host application in the
+"EZTool" mode.
+
+::
+
+  $ cd ../host/src
+  $ make
+
+This builds the host application as well as the man-pages for each command and
+the host application itself.
+
+Usage
+-----
+
+Execute ``eztool`` and then type ``man eztool`` for more information.
+Alternatively you can directly read its man page using
+
+::
+
+  $ man host/src/man/man1/eztool.1
+
+
+Git Submodules
+--------------
+
+The projects ``pas-readline``, ``pas-tcl`` and ``pas-libusb`` are referenced using `Git
+Submodules <http://git-scm.com/book/en/Git-Tools-Submodules>`_. To clone
+this project, you have to add the submodules too.
 
 ::
 
@@ -90,11 +159,10 @@ See als
  - http://longweekendmobile.com/2010/11/05/making-changes-in-a-git-submodule-made-simple/
  - https://git.wiki.kernel.org/index.php/GitSubmoduleTutorial
 
-**ezusb-firmware**
-  Firmware skeleton for the Cypress EZ-USB microcontroller
-  https://github.com/hansiglaser/ezusb-firmware.git
+EZUSB Firmware
+--------------
 
-This can either be used with the `git subtree merge
+The firmware can either be used with the `git subtree merge
 <http://git-scm.com/book/en/Git-Tools-Subtree-Merging>`_ or simply by
 downloading the current release from GitHub.
 
