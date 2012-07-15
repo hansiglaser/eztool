@@ -25,3 +25,18 @@ License
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
+References
+----------
+
+**pas-readline**
+  Object Oriented wrapper for GNU Readline for Pascal
+  https://github.com/hansiglaser/pas-readline
+
+**pas-tcl**
+  Object Oriented wrapper for TCL for Pascal
+  https://github.com/hansiglaser/pas-tcl
+
+**pas-libusb**
+  Object Oriented wrapper for LibUSB
+  https://github.com/hansiglaser/pas-libusb
+
