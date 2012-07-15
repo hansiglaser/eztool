@@ -1,0 +1,6 @@
+*.o
+*.ppu
+backup
+man
+eztool
+*~
