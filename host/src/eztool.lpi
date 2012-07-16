@@ -33,7 +33,7 @@
         <LaunchingApplication PathPlusParams="/usr/X11R6/bin/xterm -T 'Lazarus Run Output' -e $(LazarusDir)/tools/runwait.sh $(TargetCmdLine)"/>
       </local>
     </RunParams>
-    <Units Count="54">
+    <Units Count="58">
       <Unit0>
         <Filename Value="eztool.pas"/>
         <IsPartOfProject Value="True"/>
@@ -41,13 +41,13 @@
         <IsVisibleTab Value="True"/>
         <EditorIndex Value="0"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="1424"/>
-        <CursorPos X="1" Y="1444"/>
+        <TopLine Value="1887"/>
+        <CursorPos X="20" Y="1927"/>
         <UsageCount Value="200"/>
         <Bookmarks Count="3">
           <Item0 X="1" Y="1" ID="3"/>
-          <Item1 X="76" Y="1549" ID="1"/>
-          <Item2 X="1" Y="266" ID="2"/>
+          <Item1 X="1" Y="308" ID="2"/>
+          <Item2 X="24" Y="1949" ID="1"/>
         </Bookmarks>
         <Loaded Value="True"/>
       </Unit0>
@@ -65,8 +65,8 @@
         <UnitName Value="Device"/>
         <EditorIndex Value="3"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="85"/>
-        <CursorPos X="67" Y="112"/>
+        <TopLine Value="15"/>
+        <CursorPos X="31" Y="304"/>
         <UsageCount Value="200"/>
         <Loaded Value="True"/>
       </Unit2>
@@ -83,8 +83,8 @@
         <UnitName Value="Utils"/>
         <EditorIndex Value="2"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="32"/>
-        <CursorPos X="42" Y="59"/>
+        <TopLine Value="86"/>
+        <CursorPos X="1" Y="97"/>
         <UsageCount Value="100"/>
         <Loaded Value="True"/>
       </Unit4>
@@ -192,7 +192,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="1"/>
         <CursorPos X="18" Y="17"/>
-        <UsageCount Value="86"/>
+        <UsageCount Value="89"/>
       </Unit19>
       <Unit20>
         <Filename Value="../readline/historyoop.pas"/>
@@ -229,9 +229,9 @@
         <Filename Value="../pas-tcl/src/tcloop.pas"/>
         <UnitName Value="TclOOP"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="359"/>
-        <CursorPos X="50" Y="375"/>
-        <UsageCount Value="11"/>
+        <TopLine Value="94"/>
+        <CursorPos X="1" Y="121"/>
+        <UsageCount Value="12"/>
       </Unit24>
       <Unit25>
         <Filename Value="tclcmdline.pas"/>
@@ -240,7 +240,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="1"/>
         <CursorPos X="35" Y="8"/>
-        <UsageCount Value="82"/>
+        <UsageCount Value="85"/>
       </Unit25>
       <Unit26>
         <Filename Value="../pas-readline/src/historyoop.pas"/>
@@ -315,14 +315,14 @@
         <WindowIndex Value="0"/>
         <TopLine Value="1"/>
         <CursorPos X="49" Y="32"/>
-        <UsageCount Value="79"/>
+        <UsageCount Value="82"/>
       </Unit35>
       <Unit36>
         <Filename Value="../pas-tcl/src/tclDecls.inc.pas"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="247"/>
-        <CursorPos X="10" Y="273"/>
-        <UsageCount Value="7"/>
+        <TopLine Value="137"/>
+        <CursorPos X="39" Y="156"/>
+        <UsageCount Value="10"/>
       </Unit36>
       <Unit37>
         <Filename Value="../pas-tcl/src/tcl.pas"/>
@@ -339,7 +339,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="1"/>
         <CursorPos X="6" Y="16"/>
-        <UsageCount Value="73"/>
+        <UsageCount Value="76"/>
       </Unit38>
       <Unit39>
         <Filename Value="tclcmdlinepredef.pas"/>
@@ -353,9 +353,9 @@
         <Filename Value="../pas-readline/src/cmdline.pas"/>
         <UnitName Value="CmdLine"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="34"/>
-        <CursorPos X="29" Y="74"/>
-        <UsageCount Value="9"/>
+        <TopLine Value="6"/>
+        <CursorPos X="14" Y="27"/>
+        <UsageCount Value="11"/>
       </Unit40>
       <Unit41>
         <Filename Value="../pas-tcl/src/tclapp.pas"/>
@@ -363,14 +363,14 @@
         <WindowIndex Value="0"/>
         <TopLine Value="4"/>
         <CursorPos X="17" Y="51"/>
-        <UsageCount Value="9"/>
+        <UsageCount Value="11"/>
       </Unit41>
       <Unit42>
         <Filename Value="../pas-tcl/src/tclcmdlinepredef.pas"/>
         <UnitName Value="TclCmdLinePredef"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="159"/>
-        <CursorPos X="44" Y="201"/>
+        <TopLine Value="160"/>
+        <CursorPos X="26" Y="172"/>
         <UsageCount Value="13"/>
       </Unit42>
       <Unit43>
@@ -407,9 +407,9 @@
         <Filename Value="../pas-tcl/src/tclcmdline.pas"/>
         <UnitName Value="TclCmdLine"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="60"/>
-        <CursorPos X="19" Y="64"/>
-        <UsageCount Value="9"/>
+        <TopLine Value="183"/>
+        <CursorPos X="1" Y="232"/>
+        <UsageCount Value="11"/>
       </Unit47>
       <Unit48>
         <Filename Value="libusb.pas"/>
@@ -442,7 +442,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="18"/>
         <CursorPos X="55" Y="70"/>
-        <UsageCount Value="57"/>
+        <UsageCount Value="60"/>
         <Loaded Value="True"/>
       </Unit51>
       <Unit52>
@@ -461,128 +461,132 @@
         <CursorPos X="48" Y="124"/>
         <UsageCount Value="7"/>
       </Unit53>
+      <Unit54>
+        <Filename Value="/usr/share/fpcsrc/2.6.0/rtl/objpas/sysutils/filutilh.inc"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="58"/>
+        <CursorPos X="10" Y="104"/>
+        <UsageCount Value="10"/>
+      </Unit54>
+      <Unit55>
+        <Filename Value="/usr/share/fpcsrc/2.6.0/rtl/objpas/sysutils/sysutils.inc"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="7"/>
+        <CursorPos X="7" Y="27"/>
+        <UsageCount Value="10"/>
+      </Unit55>
+      <Unit56>
+        <Filename Value="/usr/share/fpcsrc/2.6.0/rtl/objpas/classes/classesh.inc"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="674"/>
+        <CursorPos X="15" Y="700"/>
+        <UsageCount Value="10"/>
+      </Unit56>
+      <Unit57>
+        <Filename Value="/usr/share/fpcsrc/2.6.0/rtl/objpas/classes/stringl.inc"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="1311"/>
+        <CursorPos X="3" Y="1314"/>
+        <UsageCount Value="10"/>
+      </Unit57>
     </Units>
-    <JumpHistory Count="30" HistoryIndex="29">
+    <JumpHistory Count="24" HistoryIndex="23">
       <Position1>
         <Filename Value="eztool.pas"/>
-        <Caret Line="89" Column="13" TopLine="71"/>
+        <Caret Line="1937" Column="1" TopLine="1924"/>
       </Position1>
       <Position2>
         <Filename Value="eztool.pas"/>
-        <Caret Line="206" Column="22" TopLine="161"/>
+        <Caret Line="1939" Column="1" TopLine="1924"/>
       </Position2>
       <Position3>
         <Filename Value="eztool.pas"/>
-        <Caret Line="246" Column="51" TopLine="201"/>
+        <Caret Line="1951" Column="1" TopLine="1924"/>
       </Position3>
       <Position4>
         <Filename Value="eztool.pas"/>
-        <Caret Line="420" Column="31" TopLine="389"/>
+        <Caret Line="1965" Column="1" TopLine="1924"/>
       </Position4>
       <Position5>
         <Filename Value="eztool.pas"/>
-        <Caret Line="703" Column="12" TopLine="658"/>
+        <Caret Line="1897" Column="1" TopLine="1871"/>
       </Position5>
       <Position6>
         <Filename Value="eztool.pas"/>
-        <Caret Line="1160" Column="9" TopLine="1115"/>
+        <Caret Line="1898" Column="1" TopLine="1871"/>
       </Position6>
       <Position7>
         <Filename Value="eztool.pas"/>
-        <Caret Line="1183" Column="8" TopLine="1138"/>
+        <Caret Line="1899" Column="1" TopLine="1871"/>
       </Position7>
       <Position8>
         <Filename Value="eztool.pas"/>
-        <Caret Line="1188" Column="9" TopLine="1143"/>
+        <Caret Line="1931" Column="1" TopLine="1905"/>
       </Position8>
       <Position9>
         <Filename Value="eztool.pas"/>
-        <Caret Line="1177" Column="54" TopLine="1663"/>
+        <Caret Line="1967" Column="1" TopLine="1924"/>
       </Position9>
       <Position10>
         <Filename Value="eztool.pas"/>
-        <Caret Line="1" Column="1" TopLine="1"/>
+        <Caret Line="1969" Column="1" TopLine="1924"/>
       </Position10>
       <Position11>
         <Filename Value="eztool.pas"/>
-        <Caret Line="37" Column="25" TopLine="1"/>
+        <Caret Line="1892" Column="1" TopLine="1876"/>
       </Position11>
       <Position12>
         <Filename Value="eztool.pas"/>
-        <Caret Line="89" Column="13" TopLine="44"/>
+        <Caret Line="1891" Column="31" TopLine="1865"/>
       </Position12>
       <Position13>
         <Filename Value="eztool.pas"/>
-        <Caret Line="206" Column="22" TopLine="161"/>
+        <Caret Line="1889" Column="3" TopLine="1775"/>
       </Position13>
       <Position14>
         <Filename Value="eztool.pas"/>
-        <Caret Line="1" Column="1" TopLine="1"/>
+        <Caret Line="1949" Column="14" TopLine="1930"/>
       </Position14>
       <Position15>
         <Filename Value="eztool.pas"/>
-        <Caret Line="37" Column="25" TopLine="1"/>
+        <Caret Line="1896" Column="17" TopLine="1868"/>
       </Position15>
       <Position16>
         <Filename Value="eztool.pas"/>
-        <Caret Line="89" Column="13" TopLine="44"/>
+        <Caret Line="1889" Column="20" TopLine="1868"/>
       </Position16>
       <Position17>
         <Filename Value="eztool.pas"/>
-        <Caret Line="1" Column="1" TopLine="1"/>
+        <Caret Line="1898" Column="11" TopLine="1868"/>
       </Position17>
       <Position18>
         <Filename Value="eztool.pas"/>
-        <Caret Line="39" Column="1" TopLine="1"/>
+        <Caret Line="1901" Column="21" TopLine="1875"/>
       </Position18>
       <Position19>
         <Filename Value="eztool.pas"/>
-        <Caret Line="90" Column="13" TopLine="45"/>
+        <Caret Line="209" Column="81" TopLine="183"/>
       </Position19>
       <Position20>
         <Filename Value="eztool.pas"/>
-        <Caret Line="210" Column="24" TopLine="162"/>
+        <Caret Line="1914" Column="23" TopLine="1887"/>
       </Position20>
       <Position21>
         <Filename Value="eztool.pas"/>
-        <Caret Line="252" Column="54" TopLine="204"/>
+        <Caret Line="1913" Column="1" TopLine="1887"/>
       </Position21>
       <Position22>
         <Filename Value="eztool.pas"/>
-        <Caret Line="424" Column="21" TopLine="379"/>
+        <Caret Line="1914" Column="25" TopLine="1891"/>
       </Position22>
       <Position23>
-        <Filename Value="eztool.pas"/>
-        <Caret Line="708" Column="12" TopLine="663"/>
+        <Filename Value="utils.pas"/>
+        <Caret Line="96" Column="1" TopLine="65"/>
       </Position23>
       <Position24>
         <Filename Value="eztool.pas"/>
-        <Caret Line="1165" Column="9" TopLine="1120"/>
+        <Caret Line="1910" Column="43" TopLine="1891"/>
       </Position24>
-      <Position25>
-        <Filename Value="eztool.pas"/>
-        <Caret Line="1478" Column="20" TopLine="1443"/>
-      </Position25>
-      <Position26>
-        <Filename Value="eztool.pas"/>
-        <Caret Line="1312" Column="20" TopLine="1296"/>
-      </Position26>
-      <Position27>
-        <Filename Value="device.pas"/>
-        <Caret Line="97" Column="52" TopLine="68"/>
-      </Position27>
-      <Position28>
-        <Filename Value="device.pas"/>
-        <Caret Line="215" Column="28" TopLine="200"/>
-      </Position28>
-      <Position29>
-        <Filename Value="device.pas"/>
-        <Caret Line="48" Column="1" TopLine="18"/>
-      </Position29>
-      <Position30>
-        <Filename Value="device.pas"/>
-        <Caret Line="279" Column="1" TopLine="230"/>
-      </Position30>
     </JumpHistory>
   </ProjectOptions>
   <CompilerOptions>

@@ -11,6 +11,7 @@ Function Str2Int(St:ShortString):LongInt;
 Function StrReplace(St:String;Src,Dst:String):String;
 Procedure WriteDebug(St:AnsiString);
 Function FileSearchGlob(Glob:AnsiString):AnsiString;
+Function FileSearchGlobList(Glob:AnsiString):TStringList;
 Function GetHeapSize : SizeInt;
 Procedure HexDump(Addr:Integer;Var Buf;Length:SizeUInt);
 Procedure HexDump(Var Buf;Length:SizeUInt);
@@ -79,6 +80,18 @@ Begin
   Glob := ExpandFileName(Glob);
   if FindFirst(Glob,faAnyFile,SR) = 0 then
     Result := ExtractFilePath(Glob) + SR.Name;
+  FindClose(SR);
+End;
+
+Function FileSearchGlobList(Glob:AnsiString):TStringList;
+Var SR : TSearchRec;
+Begin
+  Result := TStringList.Create;
+  Glob := ExpandFileName(Glob);
+  if FindFirst(Glob,faAnyFile,SR) = 0 then
+    repeat
+      Result.Add(ExtractFilePath(Glob) + SR.Name);
+    until FindNext(SR) <> 0;
   FindClose(SR);
 End;
 

@@ -4,7 +4,7 @@ eztool(1) -- Control and communicate with a Cypress EZ-USB
 
 ## SYNOPSYS
 
-`eztool`
+`eztool` [`-h`|`--help`] [`-b`] [`-f` <filename>] [`-c` <string>] [`-n`]
 
 ## DESCRIPTION
 
@@ -60,6 +60,41 @@ The sub-extension `ex` is used.
 
 To quit `eztool` use `exit`(1ez) or type [Ctrl]-[D].
 
+## OPTIONS
+
+  * `-h`, `--help`:
+    Print a usage information and exit.
+
+  * `-b`:
+    Batch mode. `eztool` will not wait for user input but quit directly after
+    the startup scripts, the scripts given with `-f` parameters and the commands
+    given with `-c` parameters were executed.
+
+  * `-f` <filename>:
+    Execute the Tcl script in _filename_ at program start.
+
+  * `-c` <string>:
+    Execute the commands given in _string_.
+
+  * `-n`:
+    Do not execute the start scripts (/etc/eztool/... TODO )
+
+## STARTUP SCRIPTS
+
+`eztool` searches and executes startup scripts at program start, which are
+_/etc/eztool/eztoolrc_, _/etc/eztool/eztool.d/*.tcl_ (in alphabetical order)
+and _~/eztoolrc_ in that order. If the option `-n` is given, none of these
+startup scripts are executed.
+
+Next, if the option `-f` _filename_ is given, the Tcl script _filename_ is
+executed. The Tcl commands supplied with the option `-c` _string_ are also
+executed. These scripts and commands are executed in the order of the options
+on command line.
+
+Finally, the user is prompted to input his commands, unless the option `-b`
+is given, which immediately quits the program after all scripts and commands
+are executed.
+
 ## COMMANDS
 
 Note that some commands are only available in certain modes.
@@ -106,6 +141,15 @@ Note that some commands are only available in certain modes.
 
 ## FILES
 
+  * _/etc/eztool/eztoolrc_:
+    System-wide startup script
+
+  * _/etc/eztool/eztoolrc.d/*.tcl_:
+    Base directory for more system-wide startup scripts
+
+  * _~/.eztoolrc_:
+    Personal startup script
+
   * _~/.eztool_history_:
     stores the history of the commands entered at the prompt
 
@@ -119,7 +163,6 @@ Note that some commands are only available in certain modes.
 
  - implement variable $timeout
  - object type "data"
- - help/man for every command and variable
  - `man`: auto-complete man-pages (simpler: all TCL commands, but the user might
    be fooled)
  - add a `man` parameter to print to stdout without a pager
@@ -131,9 +174,6 @@ Note that some commands are only available in certain modes.
    "LESS=-X man page"
  - handle searching for firmware properly
  - handle searching for man-pages properly
- - genman.sh -> pas-tcl
- - default startup script, command line parameter to execute a user script (e.g.
-   for automation)
  - implement interrupt and isochronous transfers
  - offer to set USB configuration
 
@@ -164,7 +204,7 @@ Program EZTool;
 {$mode objfpc}{$H+}
 
 Uses
-  Classes, SysUtils, Math, LibUSB, USB, EZUSB, Device, Utils, ReadlineOOP, TclOOP, BaseUnix, Unix, TclApp, USBDeviceDebug;
+  Classes, SysUtils, Math, LibUSB, USB, EZUSB, Device, Utils, ReadlineOOP, Tcl, TclOOP, BaseUnix, Unix, TclApp, USBDeviceDebug;
 
 Type
 
@@ -844,7 +884,6 @@ The reset can be deasserted with the `-release` option.
 *)
 Procedure TEZTool.Reset(ObjC : Integer; ObjV : PPTcl_Object);
 Var DoReset,DoRelease : Boolean;
-    RetVal            : LongInt;
 Begin
   CheckMode([mdEmpty]);
   // reset [-toggle|-keep|-release]
@@ -1816,13 +1855,174 @@ End;
 (*****************************************************************************)
 
 Var Dev        : TEZTool;
+    RunScripts : Boolean;
+    BatchMode  : Boolean;
     ExitStatus : Integer;
+
+Procedure Usage(ExitCode:Byte);
+Begin
+  WriteLn('EZTool');
+  WriteLn;
+  WriteLn('Usage: eztool [-h|--help] [-b] [-f filename] [-c string] [-n]');
+  WriteLn;
+  WriteLn('  -h, --help   Print a usage information and exit.');
+  WriteLn;
+  WriteLn('  -b           Batch mode. eztool will not wait for user input but quit');
+  WriteLn('               directly after the startup scripts, the scripts given with -f');
+  WriteLn('               parameters and the commands given with -c parameters were');
+  WriteLn('               executed.');
+  WriteLn;
+  WriteLn('  -f filename  Execute the Tcl script in filename at program start.');
+  WriteLn;
+  WriteLn('  -c string    Execute the commands given in string.');
+  WriteLn;
+  WriteLn('  -n           Do not execute the start scripts (/etc/eztool/... TODO )');
+  WriteLn;
+  Halt(ExitCode);
+End;
+
+(**
+ * Local helper to execute TCL commands
+ *
+ * The TCL commands are evaluated by Tcl. Then the result is checked and
+ * printed to the screen. If 'exit' was used, an exception is raised. This is
+ * caught in the main program.
+ *)
+Procedure Eval(St:String);
+Var Code : Integer;
+Begin
+  // execute command
+  Code := Dev.FTCL.Eval(St);
+
+  // handle result
+  if (Code <> TCL_OK) then
+    Write('Error: ');
+  St := Dev.FTCL.GetStringResult;   // use 'Line' to avoid additional variable
+  if St > '' then
+    WriteLn(St);
+
+  // handle if 'exit' was called
+  ExitStatus := Dev.FCmdLine.ExitStatus;
+  if (ExitStatus >= 0) or (Code <> TCL_OK) then
+    raise Exception.Create(St);
+End;
+
+Procedure EvalFile(St:String);
+Var Code : Integer;
+Begin
+  // execute script file
+  Code := Dev.FTCL.EvalFile(St);
+
+  // handle result
+  if (Code <> TCL_OK) then
+    Write('Error: ');
+  St := Dev.FTCL.GetStringResult;   // use 'Line' to avoid additional variable
+  if St > '' then
+    WriteLn(St);
+
+  // handle if 'exit' was called
+  ExitStatus := Dev.FCmdLine.ExitStatus;
+  if (ExitStatus >= 0) or (Code <> TCL_OK) then
+    raise Exception.Create(St);
+End;
+
+(**
+ * Parse the command line parameters
+ *
+ * The parameters are parsed in two phases. Phase 0 only sets internal variables
+ * which influence the behavior of the program (-b, -n). In phase 1 the scripts
+ * and commands specified with parameters -f and -c, respectively, are exeucuted.
+ *
+ * @param Phase
+ *)
+Procedure ParseParams(Phase:Integer);
+Var I : Integer;
+Begin
+  I := 1;
+  While I <= ParamCount do
+    Begin
+      if (ParamStr(I) = '-h') or (ParamStr(I) = '--help') then
+        // help
+        Usage(0)
+      else if ParamStr(I) = '-b' then
+        // switch to batch mode
+        BatchMode := true
+      else if ParamStr(I) = '-f' then
+        Begin
+          // execute script file
+          Inc(I);
+          if Phase = 1 then
+            EvalFile(ParamStr(I));
+        End
+      else if ParamStr(I) = '-c' then
+        Begin
+          // execute command
+          Inc(I);
+          if Phase = 1 then
+            Eval(ParamStr(I));
+        End
+      else if ParamStr(I) = '-n' then
+        // don't run startup scripts
+        RunScripts := false
+      else
+        // error
+        Usage(1);
+      Inc(I);
+    End;
+End;
+
+Procedure ExecuteStartupScripts;
+  Procedure EvalFileIfExists(Filename:String);
+  Begin
+    if FileExists(Filename) then
+      Begin
+        //WriteLn('Executing ',Filename);
+        EvalFile(Filename);
+      End
+    else
+      //WriteLn('Cannot find ',Filename);
+  End;
+Var List : TStringList;
+    St   : String;
+Begin
+  // run /etc/eztool/eztoolrc
+  EvalFileIfExists('/etc/eztool/eztoolrc');
+  // run /etc/eztool/eztoolrc.d/*.tcl
+  List := FileSearchGlobList('/etc/eztool/eztoolrc.d/*.tcl');
+  List.Sorted := true;  // automatically sorts the list
+  for St in List do
+    Begin
+      //WriteLn('Executing ',St);
+      EvalFile(St);
+    End;
+  // run ~/.eztoolrc
+  EvalFileIfExists(fpGetEnv('HOME')+'/.eztoolrc');
+End;
 
 Begin
   Dev := TEZTool.Create;
-  Dev.Help(0,Nil);
-  ExitStatus := Dev.Run;
-  Dev.Free;
-  Halt(ExitStatus);
+  // initialize default values
+  ExitStatus := 0;
+  RunScripts := true;
+  BatchMode  := false;
+  // parse parameters to set variables
+  ParseParams(0);
+  try
+    // execute startup scripts
+    if RunScripts then
+      ExecuteStartupScripts;
+    // parse parameters to execute scripts and commands given as parameters
+    ParseParams(1);
+    // show help and run command prompt
+    if not BatchMode then
+      Begin
+        Dev.Help(0,Nil);
+        ExitStatus := Dev.Run;
+      End;
+  finally
+    // cleanup, finish
+    Dev.Free;
+    Halt(ExitStatus);
+  End;
 End.
 
