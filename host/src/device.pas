@@ -45,6 +45,8 @@ Const
   CMD_WRITE_EEPROM  = $86;    // write to EEPROM
   CMD_READ_XDATA    = $87;    // read from XDATA
   CMD_WRITE_XDATA   = $88;    // write to XDATA
+  CMD_READ_I2C      = $89;    // generic read at I2C bus
+  CMD_WRITE_I2C     = $8A;    // generic write at I2C bus
 
 
 Const
@@ -93,6 +95,8 @@ Type
     Function  EEWrite(Addr:Word;Const Buf;Len:Byte) : Integer;
     Function  XRead  (Addr:Word;Out   Buf;Len:Word) : Integer;
     Function  XWrite (Addr:Word;Const Buf;Len:Word) : Integer;
+    Function  I2CRead (Addr:Byte;Out   Buf;Len:Byte) : Integer;
+    Function  I2CWrite(Addr:Byte;Const Buf;Len:Byte) : Integer;
   End;
 
 Implementation
@@ -249,6 +253,28 @@ Begin
   R := FEPOut.Send(Buf,Len,1000);
   if R <> Len then
     raise USBException('XWrite EP Send',R);
+End;
+
+Function TEZToolDevice.I2CRead(Addr : Byte; Out Buf; Len : Byte) : Integer;
+Var R : LongInt;
+Begin
+  R := SendCommand(CMD_READ_I2C,Len,Addr);
+  if R < 0 then
+    raise USBException('I2CRead SendCommand',R);
+  R := FEPIn.Recv(Buf,Len,1000);
+  if R <> Len then
+    raise USBException('I2CRead EP Recv',R);
+End;
+
+Function TEZToolDevice.I2CWrite(Addr : BYte; Const Buf; Len : Byte) : Integer;
+Var R : LongInt;
+Begin
+  R := SendCommand(CMD_WRITE_I2C,Len,Addr);
+  if R < 0 then
+    raise USBException('I2CWrite SendCommand',R);
+  R := FEPOut.Send(Buf,Len,1000);
+  if R <> Len then
+    raise USBException('I2CWrite EP Send',R);
 End;
 
 Function TEZToolDevice.MatchUnconfigured(ADev:PUSBDevice):Boolean;

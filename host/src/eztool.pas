@@ -35,7 +35,8 @@ The `EZTool Mode` downloads a firmware supplied with this tool. This allows
 more control over the features of the EZ-USB chip, which include access to the
 IO ports (`iosetup`(1ez), `ioset`(1ez), `ioget`(1ez)), the external I2C EEPROM
 (`eeread`(1ez), `eewrite`(1ez)) and the internal XRAM (`xread`(1ez),
-`xwrite`(1ez)).
+`xwrite`(1ez)). Generic I2C routines (`i2cread`(1ez) and `i2cwrite`(1ez)) are
+available to communicate with any I2C device.
 
 In the `User Mode`, direct USB communication with the USB device is offered.
 This does not require an EZ-USB chip, but allows all kinds of USB transfers
@@ -89,6 +90,8 @@ Note that some commands are only available in certain modes.
      eewrite addr b0 b1 b2 ...
      xread addr len
      xwrite addr b0 b1 b2 ...
+     i2cread addr len
+     i2cwrite addr b0 b1 b2 ...
 
 **User Mode**
      claim intf alt
@@ -204,6 +207,8 @@ Type
     Procedure EEWrite   (ObjC:Integer;ObjV:PPTcl_Object);
     Procedure XRead     (ObjC:Integer;ObjV:PPTcl_Object);
     Procedure XWrite    (ObjC:Integer;ObjV:PPTcl_Object);
+    Procedure I2CRead   (ObjC:Integer;ObjV:PPTcl_Object);
+    Procedure I2CWrite  (ObjC:Integer;ObjV:PPTcl_Object);
     // Mode: User
     Procedure Claim     (ObjC:Integer;ObjV:PPTcl_Object);
     Procedure ControlMsg(ObjC:Integer;ObjV:PPTcl_Object);
@@ -244,6 +249,8 @@ Begin
   FTCL.CreateObjCommand('eewrite',   @Self.EEWrite,   nil);
   FTCL.CreateObjCommand('xread',     @Self.XRead,     nil);
   FTCL.CreateObjCommand('xwrite',    @Self.XWrite,    nil);
+  FTCL.CreateObjCommand('i2cread',   @Self.I2CRead,   nil);
+  FTCL.CreateObjCommand('i2cwrite',  @Self.I2CWrite,  nil);
   // Mode: User
   FTCL.CreateObjCommand('claim',     @Self.Claim,     nil);
   FTCL.CreateObjCommand('controlmsg',@Self.ControlMsg,nil);
@@ -415,8 +422,10 @@ Begin
   WriteLn('  ioget A|B|C');
   WriteLn('  eeread addr len');
   WriteLn('  eewrite addr b0 b1 b2 ...');
-  WriteLn('  xread ...');
-  WriteLn('  xwrite ...');
+  WriteLn('  xread addr len');
+  WriteLn('  xwrite addr b0 b1 b2 ...');
+  WriteLn('  i2cread addr len');
+  WriteLn('  i2cwrite addr b0 b1 b2 ...');
   WriteLn('Mode: Connected to EU-USB device with user firmware ("User")');
   WriteLn('  claim intf alt');
   WriteLn('  controlmsg bmRequestType bRequest wValue wIndex [length|b0 b1 b2 ...]');
@@ -1361,6 +1370,114 @@ Begin
   else
     FEZToolDevice.XWrite(Addr,Buf^,ObjC-2);
   FreeMem(Buf);
+End;
+
+(*ronn
+i2cread(1ez) -- get data from I2C EEPROM
+=======================================
+
+## SYNOPSYS
+
+`i2cread` <addr> <len>
+
+## DESCRIPTION
+
+`i2cread` issues a read transfer at the I2C bus. The 7-bit address of the I2C
+slave is specifyed with <addr>. This value will be left-shifted by 1 and the
+LSB is set to 1, denoting an I2C read transfer. A total of <len> bytes are
+read. The maximum value of <len> is 64. <addr> is limited to 0x7F.
+
+## EXAMPLES
+
+For an example see `i2cwrite`(1ez).
+
+## MODES
+
+`EZTool`
+
+## SEE ALSO
+
+`i2cwrite`(1ez)
+
+*)
+Procedure TEZTool.I2CRead(ObjC : Integer; ObjV: PPTcl_Object);
+Var Buf  : Array[0..63] of Byte;
+    Addr : Cardinal;
+    Len  : Cardinal;
+Begin
+  CheckMode([mdEZTool]);
+  // eeread addr len
+  if ObjC <> 3 then
+    raise Exception.Create('Invalid parameters');
+  Addr := ObjV^[1].AsInteger(FTCL);
+  Len  := ObjV^[2].AsInteger(FTCL);
+  if Addr >= $0100 then
+    raise Exception.Create('Maximum start address is 0x00FF');
+  if Len > 64 then
+    raise Exception.Create('Maximum length is 64 bytes');
+  FEZToolDevice.I2CRead(Addr,Buf,Len);
+  HexDump(Addr,Buf,Len);
+End;
+
+(*ronn
+i2cwrite(1ez) -- write data to I2C EEPROM
+========================================
+
+## SYNOPSYS
+
+`i2cwrite` <addr> <b0> <b1> <b2> ...
+
+## DESCRIPTION
+
+Use `i2cwrite` to perform a generic write transfer at the I2C bus. <addr>
+specifies the 7-bit slave address. It must be between 0x00 and 0x7F. This value
+will be left-shifted by 1 and the LSB is set to 0, denoting an I2C write
+transfer. The following arguments <b0>, <b1>, ... are one or more data bytes
+which are written on the I2C bus
+
+## EXAMPLES
+
+To configure an HMC5883L (Three-Axis Digital Compass IC, 7-bit address 0x1E,
+8-bit read address 0x3D, 8-bit write address 0x3C) for continuous measurement
+mode (mode register at internal address 0x02 set to 0x00), use the command:
+
+    i2cwrite 0x1E 0x02 0x00
+
+To read the current measurement (data registers at internal addresses 0x03 to
+0x08), use the commands
+
+    # set address pointer
+    i2cwrite 0x1E 0x03
+    # read 6 bytes
+    i2cread  0x1E 6
+
+## MODES
+
+`EZTool`
+
+## SEE ALSO
+
+`i2cread`(1ez)
+
+*)
+Procedure TEZTool.I2CWrite(ObjC : Integer; ObjV: PPTcl_Object);
+Var Buf  : Array[0..63] of Byte;
+    Addr : Cardinal;
+    I    : Integer;
+Begin
+  CheckMode([mdEZTool]);
+  // eewrite addr b0 b1 b2 ...
+  if ObjC < 3 then
+    raise Exception.Create('Invalid parameters');
+  Addr := ObjV^[1].AsInteger(FTCL);
+  if Addr >= $0100 then
+    raise Exception.Create('Maximum start address is 0x00FF');
+  if (Addr and $000F) + (ObjC-2) > 16 then
+    raise Exception.Create('You can not cross a 16-byte-page boundary');
+  For I := 0 to Min(ObjC-3,High(Buf)) do
+    Buf[I] := ObjV^[I+2].AsInteger(FTCL);
+  HexDump(Addr,Buf,ObjC-2);
+  FEZToolDevice.I2CWrite(Addr,Buf,ObjC-2);
 End;
 
 (*****************************************************************************)

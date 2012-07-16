@@ -35,7 +35,9 @@
 #define CMD_WRITE_EEPROM  0x86    // write to EEPROM
 #define CMD_READ_XDATA    0x87    // read from XDATA
 #define CMD_WRITE_XDATA   0x88    // write to XDATA
-// TODO: other I2C stuff, other peripherals (UART, ...), external memory, ...
+#define CMD_READ_I2C      0x89    // generic read at I2C bus
+#define CMD_WRITE_I2C     0x8A    // generic write at I2C bus
+// TODO: other peripherals (UART, ...), external memory, ...
 // 0xA0 .. 0xAF are reserved by Anchor / Cypress
 
 /* Command: GetVersion ******************************************************/

@@ -153,7 +153,7 @@ void ReadEEPROM() {
 }
 
 /****************************************************************************/
-/***  WriteEEPROM ***********************************************************/
+/***  WriteEEPROM  **********************************************************/
 /****************************************************************************/
 
 typedef struct {
@@ -240,6 +240,51 @@ void WriteXDATA() {
 }
 
 /****************************************************************************/
+/***  ReadI2C  **************************************************************/
+/****************************************************************************/
+
+// CmdIndex: I2C Address
+// CmdValue: Length
+void ReadI2C() {
+  uint8_t Addr;
+  uint8_t Len;
+  // get parameters
+  Addr = CmdIndex & 0x00FF;
+  Len  = CmdValue & 0x00FF;
+  // 1 <= Length <= 64 (because of IN2BUF)
+  if (Len == 0) return;
+  if (Len > 64) return;
+  // read
+  if (i2c_read(Addr,Len,IN2BUF) != I2C_OK) {
+    // ERROR
+    return;
+  }
+  IN2BC = Len;
+}
+
+/****************************************************************************/
+/***  WriteI2C  *************************************************************/
+/****************************************************************************/
+
+// CmdIndex: I2C Address
+// CmdValue: Length
+void WriteI2C() {
+  uint8_t Addr;
+  uint8_t Len;
+  // get parameters
+  Addr = CmdIndex & 0x00FF;
+  Len  = CmdValue & 0x00FF;
+  // 1 <= Length <= 64 (because of OUT2BUF)
+  if (Len == 0) return;
+  if (Len > 64) return;
+  // write
+  if (i2c_write(I2C_ADDR_EEPROM,Len,OUT2BUF) != I2C_OK) {
+    // ERROR
+    return;
+  }
+}
+
+/****************************************************************************/
 /***  Command Handler  ******************************************************/
 /****************************************************************************/
 
@@ -293,6 +338,16 @@ void HandleCmd() {
       // wait for EP2 Sempaphore, rest is done in HandleOut()
       break;
     }
+    case CMD_READ_I2C: {       // generic read at I2C bus /////////////////////
+      ReadI2C();
+      break;
+    }
+    case CMD_WRITE_I2C: {      // generic write at I2C bus ////////////////////
+      // arm EP2
+      OUT2BC = 0;
+      // wait for EP2 Sempaphore, rest is done in HandleOut()
+      break;
+    }
     default: {
       break;
     }
@@ -329,6 +384,10 @@ void HandleOut() {
     }
     case CMD_WRITE_XDATA: {    // write to XDATA memory ///////////////////////
       WriteXDATA();
+      break;
+    }
+    case CMD_WRITE_I2C: {      // generic write at I2C bus ////////////////////
+      WriteI2C();
       break;
     }
     default: {
