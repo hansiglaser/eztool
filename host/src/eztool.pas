@@ -1445,17 +1445,17 @@ Var Buf  : Array[0..63] of Byte;
     Len  : Cardinal;
 Begin
   CheckMode([mdEZTool]);
-  // eeread addr len
+  // i2cread addr len
   if ObjC <> 3 then
     raise Exception.Create('Invalid parameters');
   Addr := ObjV^[1].AsInteger(FTCL);
   Len  := ObjV^[2].AsInteger(FTCL);
-  if Addr >= $0100 then
-    raise Exception.Create('Maximum start address is 0x00FF');
+  if Addr >= $007F then
+    raise Exception.Create('Maximum I2C address is 0x7F');
   if Len > 64 then
     raise Exception.Create('Maximum length is 64 bytes');
   FEZToolDevice.I2CRead(Addr,Buf,Len);
-  HexDump(Addr,Buf,Len);
+  HexDump($0000,Buf,Len);
 End;
 
 (*ronn
@@ -1505,17 +1505,17 @@ Var Buf  : Array[0..63] of Byte;
     I    : Integer;
 Begin
   CheckMode([mdEZTool]);
-  // eewrite addr b0 b1 b2 ...
+  // i2cwrite addr b0 b1 b2 ...
   if ObjC < 3 then
     raise Exception.Create('Invalid parameters');
   Addr := ObjV^[1].AsInteger(FTCL);
-  if Addr >= $0100 then
-    raise Exception.Create('Maximum start address is 0x00FF');
-  if (Addr and $000F) + (ObjC-2) > 16 then
-    raise Exception.Create('You can not cross a 16-byte-page boundary');
+  if Addr >= $007F then
+    raise Exception.Create('Maximum I2C address is 0x7F');
+  if ObjC-2 > 64 then
+    raise Exception.Create('Maximum length is 64 bytes');
   For I := 0 to Min(ObjC-3,High(Buf)) do
     Buf[I] := ObjV^[I+2].AsInteger(FTCL);
-  HexDump(Addr,Buf,ObjC-2);
+  HexDump($0000,Buf,ObjC-2);
   FEZToolDevice.I2CWrite(Addr,Buf,ObjC-2);
 End;
 

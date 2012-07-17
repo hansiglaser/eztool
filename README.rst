@@ -93,7 +93,8 @@ This builds the device firmware which is used by the host application in the
   $ make
 
 This builds the host application as well as the man-pages for each command and
-the host application itself.
+the host application itself. Ensure that you installed the GNU Readline and
+Tcl development packages first. To build the man-pages, "ronn" is required.
 
 Usage
 -----

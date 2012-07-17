@@ -278,7 +278,7 @@ void WriteI2C() {
   if (Len == 0) return;
   if (Len > 64) return;
   // write
-  if (i2c_write(I2C_ADDR_EEPROM,Len,OUT2BUF) != I2C_OK) {
+  if (i2c_write(Addr,Len,OUT2BUF) != I2C_OK) {
     // ERROR
     return;
   }
