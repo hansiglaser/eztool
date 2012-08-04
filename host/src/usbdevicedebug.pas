@@ -67,11 +67,15 @@ End;
 
 Function TUSBDeviceDebug.BulkIn(EP : Byte; Out Buf; Length : LongInt; Timeout : LongInt) : LongInt;
 Begin
+  if FEndpoints.IndexOf(EP) < 0 then
+    raise Exception.CreateFmt('Invalid endpoint number %d',[EP and USB_ENDPOINT_ADDRESS_MASK]);
   Result := (FEndpoints[EP] as TUSBBulkInEndpoint).Recv(Buf,Length,Timeout);
 End;
 
 Function TUSBDeviceDebug.BulkOut(EP : Byte; ConstRef Buf; Length : LongInt; Timeout : LongInt) : LongInt;
 Begin
+  if FEndpoints.IndexOf(EP) < 0 then
+    raise Exception.CreateFmt('Invalid endpoint number %d',[EP and USB_ENDPOINT_ADDRESS_MASK]);
   Result := (FEndpoints[EP] as TUSBBulkOutEndpoint).Send(Buf,Length,Timeout);
 End;
 
