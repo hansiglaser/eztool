@@ -125,15 +125,31 @@ To update a submodule with its most up-to-date state, two steps are necessary.
 ::
 
   cd ./host/pas-tcl
-  git merge origin/master    # to get teh newest revision
+  #git merge origin/master    # to get changes from a branch
+  git pull                   # to get the newest revision
   cd ../..
   git add host/pas-tcl       # to stage the update
   git commit                 # to update the pointer
 
 To change a submodule within this main project and then commit and push to
-GitHub.
+GitHub, a few things must be `considered <http://longweekendmobile.com/2010/11/05/making-changes-in-a-git-submodule-made-simple/>`_.
+A submodule by default is a 'Detached Head' this means it isn't on a branch.
 
-TODO
+::
+
+  git branch libusb-1.0      # switch to a branch
+  # make changes
+  git add ...                # stage changes
+  git commit                 # commit
+  git push                   # and push to GitHub
+  cd ../..
+  git submodule              # shows that submodules are at a newer state than
+                             # referenced by the main project
+  git add host/pas-libusb    # tell git to use the most current revision of
+                             # this submodule
+  git commit                 # commit
+  git push                   # and push to GitHub
+
 
 If changes in a submodule within this main project were made and committed,
 some hand crafting is necessary, becaus the commit created a revision

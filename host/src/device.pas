@@ -24,7 +24,7 @@ Unit Device;
 Interface
 
 Uses
-  Classes,SysUtils,BaseUnix,Utils,LibUSB,USB,EZUSB;
+  Classes,SysUtils,BaseUnix,Utils,LibUsb,LibUsbOop,LibUsbUtil,EZUSB;
 
 Const
   USBVendConf   = $0547;
@@ -32,8 +32,8 @@ Const
   FirmwareName  = 'firmware.ihx';
 
 Const
-  EP_IN    =  2 or USB_ENDPOINT_IN;
-  EP_OUT   =  2 or USB_ENDPOINT_OUT;
+  EP_IN    =  2 or LIBUSB_ENDPOINT_IN;
+  EP_OUT   =  2 or LIBUSB_ENDPOINT_OUT;
 
 Const
   CMD_GET_VERSION   = $80;
@@ -52,7 +52,7 @@ Const
 Const
   EZToolUSBConfiguration = 1;
   EZToolUSBInterface     = 0;
-  EZToolUSBAltInterface  = 1;
+  EZToolUSBAltInterface  = 0;
 
 Type
 
@@ -61,7 +61,7 @@ Type
 
   { TEZToolDevice }
 
-  TEZToolDevice = Class(TUSBDeviceWithFirmware)
+  TEZToolDevice = Class(TLibUsbDeviceWithFirmware)
   protected
     FUidVendorEmpty   : Word;   // unconfigured
     FUidProductEmpty  : Word;
@@ -69,15 +69,13 @@ Type
     FUidProductEzTool : Word;
     FFirmwareFile     : String;
     { USB variables }
-    FInterface       : TUSBInterface;
-    FEPIn            : TUSBBulkInEndpoint;
-    FEPOut           : TUSBBulkOutEndpoint;
-    Function  MatchUnconfigured(ADev:PUSBDevice) : Boolean; override;
-    Function  MatchConfigured  (ADev:PUSBDevice) : Boolean; override;
-    Procedure Configure(ADev:PUSBDevice); override;
+    FInterface       : TLibUsbInterface;
+    FEPIn            : TLibUsbBulkInEndpoint;
+    FEPOut           : TLibUsbBulkOutEndpoint;
+    Procedure Configure(ADev:Plibusb_device); override;
   public
     { class methods }
-    Constructor Create(AIsConfigured:Boolean;AidVendorEmpty,AidProductEmpty:Word;AFirmwareFile:String;AidVendorEztool:Word=USBVendConf;AidProductEztool:Word=USBProdConf);
+    Constructor Create(AContext:TLibUsbContext;AMatchUnconfigured:TLibUsbDeviceMatchClass;AFirmwareFile:String;AMatchConfigured:TLibUsbDeviceMatchClass);
     Destructor  Destroy; override;
     Class Function FindFirmware(AName, AProgram : String) : String;
   protected
@@ -101,23 +99,32 @@ Type
 
 Implementation
 
-Constructor TEZToolDevice.Create(AIsConfigured:Boolean;AidVendorEmpty,AidProductEmpty:Word;AFirmwareFile:String;AidVendorEztool:Word=USBVendConf;AidProductEztool:Word=USBProdConf);
+(**
+ * Constructor
+ *
+ * @param AContext            libusb context
+ * @param AMatchUnconfigured  device matcher class for the unconfigured device
+ * @param AFirmwareFile       filename of the firmware Intel Hex file. e.g. as retured by FindFirmware()
+ * @param AMatchConfigured    device matcher class for the configured device
+ *)
+Constructor TEZToolDevice.Create(AContext:TLibUsbContext;AMatchUnconfigured:TLibUsbDeviceMatchClass;AFirmwareFile:String;AMatchConfigured:TLibUsbDeviceMatchClass);
 Begin
-  FUidVendorEmpty   := AidVendorEmpty;
-  FUidProductEmpty  := AidProductEmpty;
-  FUidVendorEzTool  := AidVendorEzTool;
-  FUidProductEzTool := AidProductEzTool;
   FFirmwareFile     := AFirmwareFile;
   { uses MatchUnconfigured to find an unconfigured device, then Configure to
     do the configuration and finally MatchConfigured to find the configured
     device. }
-  inherited Create(AIsConfigured,EZToolUSBConfiguration);
+  inherited Create(AContext,AMatchUnconfigured,AMatchConfigured);
+  SetConfiguration(EZToolUSBConfiguration);
 
-  FInterface       := TUSBInterface.Create(Self,USBFindInterface(EZToolUSBInterface,EZToolUSBAltInterface,FDevice));
-  FEPIn            := TUSBBulkInEndpoint. Create(FInterface,USBFindEndpoint(EP_IN,   FInterface.FInterface));
-  FEPOut           := TUSBBulkOutEndpoint.Create(FInterface,USBFindEndpoint(EP_OUT,  FInterface.FInterface));
+  // create handlers for the endpoints (and the interface they belong to)
+  FInterface       := TLibUsbInterface.Create(Self,FindInterface(EZToolUSBInterface,EZToolUSBAltInterface));
+  FEPIn            := TLibUsbBulkInEndpoint. Create(FInterface,FInterface.FindEndpoint(EP_IN));
+  FEPOut           := TLibUsbBulkOutEndpoint.Create(FInterface,FInterface.FindEndpoint(EP_OUT));
 End;
 
+(**
+ * Destructor
+ *)
 Destructor  TEZToolDevice.Destroy;
 Begin
   { If no configured devices were found in the constructor (or any other
@@ -128,14 +135,21 @@ Begin
   inherited Destroy;
 End;
 
+(**
+ * Send a command to the device
+ *
+ * Commands are sent as control transfers.
+ *
+ * This function does not use the data phase.
+ *)
 Function TEZToolDevice.SendCommand(Cmd:Byte;Value:Word;Index:Word):Integer;
 Begin
   Result := FControl.ControlMsg(
-    USB_ENDPOINT_OUT or USB_TYPE_VENDOR or USB_RECIP_DEVICE { bmRequestType },
-    Cmd      {bRequest},
-    Value,   { wValue }
-    Index,   { wIndex }
-    100);
+    { bmRequestType } LIBUSB_ENDPOINT_OUT or LIBUSB_REQUEST_TYPE_VENDOR or LIBUSB_RECIPIENT_DEVICE,
+    { bRequest      } Cmd,
+    { wValue        } Value,
+    { wIndex        } Index,
+    { Timeout       } 100);
 End;
 
 Function TEZToolDevice.Port2Index(APort:TPort):Word;
@@ -166,10 +180,10 @@ Var R   : LongInt;
 Begin
   R := SendCommand(CMD_GET_VERSION,0,0);
   if R < 0 then
-    raise USBException('GetVersion SendCommand',R);
+    raise ELibUsb.Create(R,'GetVersion SendCommand');
   R := FEPIn.Recv(Buf,SizeOf(Buf),100);
   if R < 0 then
-    raise USBException('GetVersion EP Recv',R);
+    raise ELibUsb.Create(R,'GetVersion EP Recv');
   SetLength(Result,R);
   Move(Buf,Result[1],R);
 End;
@@ -178,10 +192,10 @@ Var R : LongInt;
 Begin
   R := SendCommand(CMD_GET_STATUS,0,0);
   if R < 0 then
-    raise USBException('GetStatus SendCommand',R);
+    raise ELibUsb.Create(R,'GetStatus SendCommand');
   R := FEPIn.Recv(Result,Sizeof(Result),100);
   if R <> Sizeof(Result) then
-    raise USBException('GetStatus EP Recv',R);
+    raise ELibUsb.Create(R,'GetStatus EP Recv');
 End;
 
 Procedure TEZToolDevice.IOSetup(APort:TPort;AConfig,AOutEnable:Byte);
@@ -189,7 +203,7 @@ Var R : LongInt;
 Begin
   R := SendCommand(CMD_SETUP_IOPORT,AConfig or (AOutEnable shl 8),Port2Index(APort));
   if R < 0 then
-    raise USBException('IOSetup SendCommand',R);
+    raise ELibUsb.Create(R,'IOSetup SendCommand');
 End;
 
 Procedure TEZToolDevice.IOSet(APort:TPort;AValue:Byte);
@@ -197,7 +211,7 @@ Var R : LongInt;
 Begin
   R := SendCommand(CMD_SET_IOPORT,AValue,Port2Index(APort));
   if R < 0 then
-    raise USBException('IOSet SendCommand',R);
+    raise ELibUsb.Create(R,'IOSet SendCommand');
 End;
 
 Function TEZToolDevice.IOGet(APort:TPort):Byte;
@@ -205,10 +219,10 @@ Var R : LongInt;
 Begin
   R := SendCommand(CMD_GET_IOPORT,0,Port2Index(APort));
   if R < 0 then
-    raise USBException('IOGet SendCommand',R);
+    raise ELibUsb.Create(R,'IOGet SendCommand');
   R := FEPIn.Recv(Result,Sizeof(Result),100);
   if R <> Sizeof(Result) then
-    raise USBException('IOGet EP Recv',R);
+    raise ELibUsb.Create(R,'IOGet EP Recv');
 End;
 
 Function TEZToolDevice.EERead(Addr:Word;Out Buf;Len:Byte):Integer;
@@ -216,10 +230,10 @@ Var R : LongInt;
 Begin
   R := SendCommand(CMD_READ_EEPROM,Len,Addr);
   if R < 0 then
-    raise USBException('EERead SendCommand',R);
+    raise ELibUsb.Create(R,'EERead SendCommand');
   R := FEPIn.Recv(Buf,Len,1000);
   if R <> Len then
-    raise USBException('EERead EP Recv',R);
+    raise ELibUsb.Create(R,'EERead EP Recv');
 End;
 
 Function TEZToolDevice.EEWrite(Addr:Word;Const Buf;Len:Byte):Integer;
@@ -227,10 +241,10 @@ Var R : LongInt;
 Begin
   R := SendCommand(CMD_WRITE_EEPROM,Len,Addr);
   if R < 0 then
-    raise USBException('EEWrite SendCommand',R);
+    raise ELibUsb.Create(R,'EEWrite SendCommand');
   R := FEPOut.Send(Buf,Len,1000);
   if R <> Len then
-    raise USBException('EEWrite EP Send',R);
+    raise ELibUsb.Create(R,'EEWrite EP Send');
 End;
 
 Function TEZToolDevice.XRead(Addr:Word;Out Buf;Len:Word):Integer;
@@ -238,10 +252,10 @@ Var R : LongInt;
 Begin
   R := SendCommand(CMD_READ_XDATA,Len,Addr);
   if R < 0 then
-    raise USBException('XRead SendCommand',R);
+    raise ELibUsb.Create(R,'XRead SendCommand');
   R := FEPIn.Recv(Buf,Len,1000);
   if R <> Len then
-    raise USBException('XRead EP Recv',R);
+    raise ELibUsb.Create(R,'XRead EP Recv');
 End;
 
 Function TEZToolDevice.XWrite(Addr:Word;Const Buf;Len:Word):Integer;
@@ -249,10 +263,10 @@ Var R : LongInt;
 Begin
   R := SendCommand(CMD_WRITE_XDATA,Len,Addr);
   if R < 0 then
-    raise USBException('XWrite SendCommand',R);
+    raise ELibUsb.Create(R,'XWrite SendCommand');
   R := FEPOut.Send(Buf,Len,1000);
   if R <> Len then
-    raise USBException('XWrite EP Send',R);
+    raise ELibUsb.Create(R,'XWrite EP Send');
 End;
 
 Function TEZToolDevice.I2CRead(Addr : Byte; Out Buf; Len : Byte) : Integer;
@@ -260,45 +274,30 @@ Var R : LongInt;
 Begin
   R := SendCommand(CMD_READ_I2C,Len,Addr);
   if R < 0 then
-    raise USBException('I2CRead SendCommand',R);
+    raise ELibUsb.Create(R,'I2CRead SendCommand');
   R := FEPIn.Recv(Buf,Len,1000);
   if R <> Len then
-    raise USBException('I2CRead EP Recv',R);
+    raise ELibUsb.Create(R,'I2CRead EP Recv');
 End;
 
-Function TEZToolDevice.I2CWrite(Addr : BYte; Const Buf; Len : Byte) : Integer;
+Function TEZToolDevice.I2CWrite(Addr : Byte; Const Buf; Len : Byte) : Integer;
 Var R : LongInt;
 Begin
   R := SendCommand(CMD_WRITE_I2C,Len,Addr);
   if R < 0 then
-    raise USBException('I2CWrite SendCommand',R);
+    raise ELibUsb.Create(R,'I2CWrite SendCommand');
   R := FEPOut.Send(Buf,Len,1000);
   if R <> Len then
-    raise USBException('I2CWrite EP Send',R);
+    raise ELibUsb.Create(R,'I2CWrite EP Send');
 End;
 
-Function TEZToolDevice.MatchUnconfigured(ADev:PUSBDevice):Boolean;
-Begin
-  { We only use the _first_ controller from the list. This is                }
-  { probably a problem when several are found to distinguish between them.   }
-  { Since in this application we only have one, this problem is not further  }
-  { investigated                                                             }
-
-  Result := (ADev^.Descriptor.idVendor  = FUidVendorEmpty) and
-            (ADev^.Descriptor.idProduct = FUidProductEmpty);
-End;
-
-Function TEZToolDevice.MatchConfigured(ADev:PUSBDevice):Boolean;
-Begin
-  Result := (ADev^.Descriptor.idVendor  = FUidVendorEzTool) and
-            (ADev^.Descriptor.idProduct = FUidProductEzTool);
-End;
-
-Procedure TEZToolDevice.Configure(ADev:PUSBDevice);
-Var EZUSB : TUSBDeviceEZUSB;
+Procedure TEZToolDevice.Configure(ADev:Plibusb_device);
+Var EZUSB : TLibUsbDeviceEZUSB;
 Begin
   WriteLn('Using Firmware file "'+FFirmwareFile+'" to configure devices.');
-  EZUSB := TUSBDeviceEZUSB.Create(ADev);
+  // create a temporary TUSBDeviceEZUSB object to download the firmware
+  EZUSB := TLibUsbDeviceEZUSB.Create(FContext,ADev);
+  EZUSB.SetConfiguration(ANCHOR_USB_CONFIG);
   EZUSB.DownloadFirmware(FFirmwareFile);
   EZUSB.Free;
 End;

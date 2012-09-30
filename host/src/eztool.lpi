@@ -33,21 +33,18 @@
         <LaunchingApplication PathPlusParams="/usr/X11R6/bin/xterm -T 'Lazarus Run Output' -e $(LazarusDir)/tools/runwait.sh $(TargetCmdLine)"/>
       </local>
     </RunParams>
-    <Units Count="58">
+    <Units Count="63">
       <Unit0>
         <Filename Value="eztool.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="EZTool"/>
-        <IsVisibleTab Value="True"/>
         <EditorIndex Value="0"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="1887"/>
-        <CursorPos X="20" Y="1927"/>
+        <TopLine Value="15"/>
+        <CursorPos X="1" Y="1"/>
         <UsageCount Value="200"/>
-        <Bookmarks Count="3">
+        <Bookmarks Count="1">
           <Item0 X="1" Y="1" ID="3"/>
-          <Item1 X="1" Y="308" ID="2"/>
-          <Item2 X="24" Y="1949" ID="1"/>
         </Bookmarks>
         <Loaded Value="True"/>
       </Unit0>
@@ -57,16 +54,16 @@
         <WindowIndex Value="0"/>
         <TopLine Value="213"/>
         <CursorPos X="16" Y="235"/>
-        <UsageCount Value="100"/>
+        <UsageCount Value="99"/>
       </Unit1>
       <Unit2>
         <Filename Value="device.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="Device"/>
-        <EditorIndex Value="3"/>
+        <EditorIndex Value="6"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="15"/>
-        <CursorPos X="31" Y="304"/>
+        <TopLine Value="29"/>
+        <CursorPos X="29" Y="55"/>
         <UsageCount Value="200"/>
         <Loaded Value="True"/>
       </Unit2>
@@ -76,12 +73,12 @@
         <WindowIndex Value="0"/>
         <TopLine Value="1"/>
         <CursorPos X="114" Y="90"/>
-        <UsageCount Value="100"/>
+        <UsageCount Value="99"/>
       </Unit3>
       <Unit4>
         <Filename Value="utils.pas"/>
         <UnitName Value="Utils"/>
-        <EditorIndex Value="2"/>
+        <EditorIndex Value="5"/>
         <WindowIndex Value="0"/>
         <TopLine Value="86"/>
         <CursorPos X="1" Y="97"/>
@@ -94,7 +91,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="448"/>
         <CursorPos X="3" Y="474"/>
-        <UsageCount Value="92"/>
+        <UsageCount Value="91"/>
       </Unit5>
       <Unit6>
         <Filename Value="../tcl/tcloop.pas"/>
@@ -102,7 +99,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="495"/>
         <CursorPos X="13" Y="521"/>
-        <UsageCount Value="93"/>
+        <UsageCount Value="92"/>
       </Unit6>
       <Unit7>
         <Filename Value="../tcl/examples/demo4.pas"/>
@@ -110,7 +107,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="1"/>
         <CursorPos X="1" Y="1"/>
-        <UsageCount Value="83"/>
+        <UsageCount Value="82"/>
       </Unit7>
       <Unit8>
         <Filename Value="../readline/examples/ootest.pas"/>
@@ -118,14 +115,14 @@
         <WindowIndex Value="0"/>
         <TopLine Value="1"/>
         <CursorPos X="49" Y="39"/>
-        <UsageCount Value="92"/>
+        <UsageCount Value="91"/>
       </Unit8>
       <Unit9>
         <Filename Value="../tcl/tclDecls.inc.pas"/>
         <WindowIndex Value="0"/>
         <TopLine Value="551"/>
         <CursorPos X="1" Y="587"/>
-        <UsageCount Value="21"/>
+        <UsageCount Value="20"/>
       </Unit9>
       <Unit10>
         <Filename Value="../readline/readlineoop.pas"/>
@@ -133,57 +130,57 @@
         <WindowIndex Value="0"/>
         <TopLine Value="29"/>
         <CursorPos X="3" Y="216"/>
-        <UsageCount Value="91"/>
+        <UsageCount Value="90"/>
       </Unit10>
       <Unit11>
         <Filename Value="/usr/share/fpcsrc/2.4.2/rtl/inc/objpash.inc"/>
         <TopLine Value="167"/>
         <CursorPos X="21" Y="194"/>
-        <UsageCount Value="2"/>
+        <UsageCount Value="1"/>
       </Unit11>
       <Unit12>
         <Filename Value="/usr/share/fpcsrc/2.4.2/rtl/unix/bunxh.inc"/>
         <TopLine Value="1"/>
         <CursorPos X="58" Y="24"/>
-        <UsageCount Value="3"/>
+        <UsageCount Value="2"/>
       </Unit12>
       <Unit13>
         <Filename Value="/usr/share/fpcsrc/2.4.2/rtl/linux/signal.inc"/>
         <WindowIndex Value="0"/>
         <TopLine Value="151"/>
         <CursorPos X="3" Y="198"/>
-        <UsageCount Value="4"/>
+        <UsageCount Value="3"/>
       </Unit13>
       <Unit14>
         <Filename Value="/usr/share/fpcsrc/2.4.2/rtl/unix/bunxovlh.inc"/>
         <TopLine Value="47"/>
         <CursorPos X="10" Y="78"/>
-        <UsageCount Value="3"/>
+        <UsageCount Value="2"/>
       </Unit14>
       <Unit15>
         <Filename Value="/usr/share/fpcsrc/2.4.2/rtl/unix/gensigset.inc"/>
         <TopLine Value="17"/>
         <CursorPos X="3" Y="46"/>
-        <UsageCount Value="3"/>
+        <UsageCount Value="2"/>
       </Unit15>
       <Unit16>
         <Filename Value="/usr/share/fpcsrc/2.4.2/rtl/objpas/sysutils/sysutilh.inc"/>
         <TopLine Value="44"/>
         <CursorPos X="19" Y="71"/>
-        <UsageCount Value="3"/>
+        <UsageCount Value="2"/>
       </Unit16>
       <Unit17>
         <Filename Value="/usr/share/fpcsrc/2.4.2/rtl/objpas/sysutils/sysutils.inc"/>
         <TopLine Value="134"/>
         <CursorPos X="10" Y="137"/>
-        <UsageCount Value="3"/>
+        <UsageCount Value="2"/>
       </Unit17>
       <Unit18>
         <Filename Value="../tcl/tclPlatDecls.inc.pas"/>
         <WindowIndex Value="0"/>
         <TopLine Value="24"/>
         <CursorPos X="1" Y="76"/>
-        <UsageCount Value="13"/>
+        <UsageCount Value="12"/>
       </Unit18>
       <Unit19>
         <Filename Value="cmdline.pas"/>
@@ -192,7 +189,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="1"/>
         <CursorPos X="18" Y="17"/>
-        <UsageCount Value="89"/>
+        <UsageCount Value="96"/>
       </Unit19>
       <Unit20>
         <Filename Value="../readline/historyoop.pas"/>
@@ -200,7 +197,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="115"/>
         <CursorPos X="3" Y="58"/>
-        <UsageCount Value="4"/>
+        <UsageCount Value="3"/>
       </Unit20>
       <Unit21>
         <Filename Value="../readline/readline.pas"/>
@@ -208,22 +205,22 @@
         <WindowIndex Value="0"/>
         <TopLine Value="482"/>
         <CursorPos X="3" Y="508"/>
-        <UsageCount Value="4"/>
+        <UsageCount Value="3"/>
       </Unit21>
       <Unit22>
         <Filename Value="../pas-readline/src/readlineoop.pas"/>
         <UnitName Value="ReadlineOOP"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="308"/>
-        <CursorPos X="53" Y="334"/>
-        <UsageCount Value="13"/>
+        <TopLine Value="314"/>
+        <CursorPos X="49" Y="344"/>
+        <UsageCount Value="14"/>
       </Unit22>
       <Unit23>
         <Filename Value="/usr/share/fpcsrc/2.6.0/rtl/objpas/sysutils/sysstrh.inc"/>
         <WindowIndex Value="0"/>
         <TopLine Value="77"/>
         <CursorPos X="10" Y="103"/>
-        <UsageCount Value="4"/>
+        <UsageCount Value="3"/>
       </Unit23>
       <Unit24>
         <Filename Value="../pas-tcl/src/tcloop.pas"/>
@@ -231,7 +228,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="94"/>
         <CursorPos X="1" Y="121"/>
-        <UsageCount Value="12"/>
+        <UsageCount Value="11"/>
       </Unit24>
       <Unit25>
         <Filename Value="tclcmdline.pas"/>
@@ -240,7 +237,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="1"/>
         <CursorPos X="35" Y="8"/>
-        <UsageCount Value="85"/>
+        <UsageCount Value="92"/>
       </Unit25>
       <Unit26>
         <Filename Value="../pas-readline/src/historyoop.pas"/>
@@ -248,7 +245,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="15"/>
         <CursorPos X="1" Y="1"/>
-        <UsageCount Value="10"/>
+        <UsageCount Value="9"/>
       </Unit26>
       <Unit27>
         <Filename Value="../pas-readline/src/history.pas"/>
@@ -256,42 +253,42 @@
         <WindowIndex Value="0"/>
         <TopLine Value="29"/>
         <CursorPos X="1" Y="1"/>
-        <UsageCount Value="10"/>
+        <UsageCount Value="9"/>
       </Unit27>
       <Unit28>
         <Filename Value="/usr/share/fpcsrc/2.6.0/rtl/unix/sysunixh.inc"/>
         <WindowIndex Value="0"/>
         <TopLine Value="4"/>
         <CursorPos X="9" Y="49"/>
-        <UsageCount Value="5"/>
+        <UsageCount Value="4"/>
       </Unit28>
       <Unit29>
         <Filename Value="/usr/share/fpcsrc/2.6.0/rtl/unix/bunxh.inc"/>
         <WindowIndex Value="0"/>
         <TopLine Value="1"/>
         <CursorPos X="1" Y="1"/>
-        <UsageCount Value="5"/>
+        <UsageCount Value="4"/>
       </Unit29>
       <Unit30>
         <Filename Value="/usr/share/fpcsrc/2.6.0/rtl/unix/aliasptp.inc"/>
         <WindowIndex Value="0"/>
         <TopLine Value="15"/>
         <CursorPos X="27" Y="41"/>
-        <UsageCount Value="5"/>
+        <UsageCount Value="4"/>
       </Unit30>
       <Unit31>
         <Filename Value="/usr/share/fpcsrc/2.6.0/rtl/linux/ptypes.inc"/>
         <WindowIndex Value="0"/>
         <TopLine Value="53"/>
         <CursorPos X="28" Y="80"/>
-        <UsageCount Value="5"/>
+        <UsageCount Value="4"/>
       </Unit31>
       <Unit32>
         <Filename Value="/usr/share/fpcsrc/2.6.0/rtl/inc/systemh.inc"/>
         <WindowIndex Value="0"/>
         <TopLine Value="322"/>
         <CursorPos X="3" Y="348"/>
-        <UsageCount Value="5"/>
+        <UsageCount Value="4"/>
       </Unit32>
       <Unit33>
         <Filename Value="/usr/share/fpcsrc/2.6.0/rtl/unix/baseunix.pp"/>
@@ -299,14 +296,14 @@
         <WindowIndex Value="0"/>
         <TopLine Value="1"/>
         <CursorPos X="8" Y="32"/>
-        <UsageCount Value="5"/>
+        <UsageCount Value="4"/>
       </Unit33>
       <Unit34>
         <Filename Value="/usr/share/fpcsrc/2.6.0/rtl/linux/errno.inc"/>
         <WindowIndex Value="0"/>
         <TopLine Value="1"/>
         <CursorPos X="1" Y="1"/>
-        <UsageCount Value="5"/>
+        <UsageCount Value="4"/>
       </Unit34>
       <Unit35>
         <Filename Value="bettertclcmdline.pas"/>
@@ -315,14 +312,14 @@
         <WindowIndex Value="0"/>
         <TopLine Value="1"/>
         <CursorPos X="49" Y="32"/>
-        <UsageCount Value="82"/>
+        <UsageCount Value="89"/>
       </Unit35>
       <Unit36>
         <Filename Value="../pas-tcl/src/tclDecls.inc.pas"/>
         <WindowIndex Value="0"/>
         <TopLine Value="137"/>
         <CursorPos X="39" Y="156"/>
-        <UsageCount Value="10"/>
+        <UsageCount Value="9"/>
       </Unit36>
       <Unit37>
         <Filename Value="../pas-tcl/src/tcl.pas"/>
@@ -330,7 +327,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="79"/>
         <CursorPos X="1" Y="79"/>
-        <UsageCount Value="7"/>
+        <UsageCount Value="6"/>
       </Unit37>
       <Unit38>
         <Filename Value="tclapp.pas"/>
@@ -339,7 +336,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="1"/>
         <CursorPos X="6" Y="16"/>
-        <UsageCount Value="76"/>
+        <UsageCount Value="83"/>
       </Unit38>
       <Unit39>
         <Filename Value="tclcmdlinepredef.pas"/>
@@ -347,23 +344,23 @@
         <WindowIndex Value="0"/>
         <TopLine Value="1"/>
         <CursorPos X="61" Y="13"/>
-        <UsageCount Value="6"/>
+        <UsageCount Value="5"/>
       </Unit39>
       <Unit40>
         <Filename Value="../pas-readline/src/cmdline.pas"/>
         <UnitName Value="CmdLine"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="6"/>
-        <CursorPos X="14" Y="27"/>
-        <UsageCount Value="11"/>
+        <TopLine Value="33"/>
+        <CursorPos X="28" Y="74"/>
+        <UsageCount Value="12"/>
       </Unit40>
       <Unit41>
         <Filename Value="../pas-tcl/src/tclapp.pas"/>
         <UnitName Value="TclApp"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="4"/>
-        <CursorPos X="17" Y="51"/>
-        <UsageCount Value="11"/>
+        <TopLine Value="15"/>
+        <CursorPos X="20" Y="51"/>
+        <UsageCount Value="12"/>
       </Unit41>
       <Unit42>
         <Filename Value="../pas-tcl/src/tclcmdlinepredef.pas"/>
@@ -371,14 +368,14 @@
         <WindowIndex Value="0"/>
         <TopLine Value="160"/>
         <CursorPos X="26" Y="172"/>
-        <UsageCount Value="13"/>
+        <UsageCount Value="12"/>
       </Unit42>
       <Unit43>
         <Filename Value="/usr/share/fpcsrc/2.6.0/rtl/objpas/sysutils/sysutilh.inc"/>
         <WindowIndex Value="0"/>
         <TopLine Value="195"/>
         <CursorPos X="13" Y="221"/>
-        <UsageCount Value="6"/>
+        <UsageCount Value="5"/>
       </Unit43>
       <Unit44>
         <Filename Value="/usr/share/fpcsrc/2.6.0/rtl/unix/sysutils.pp"/>
@@ -386,7 +383,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="1127"/>
         <CursorPos X="16" Y="1130"/>
-        <UsageCount Value="6"/>
+        <UsageCount Value="5"/>
       </Unit44>
       <Unit45>
         <Filename Value="/usr/share/fpcsrc/2.6.0/rtl/unix/errors.pp"/>
@@ -394,22 +391,22 @@
         <WindowIndex Value="0"/>
         <TopLine Value="1"/>
         <CursorPos X="26" Y="36"/>
-        <UsageCount Value="6"/>
+        <UsageCount Value="5"/>
       </Unit45>
       <Unit46>
         <Filename Value="/usr/share/fpcsrc/2.6.0/rtl/linux/errnostr.inc"/>
         <WindowIndex Value="0"/>
         <TopLine Value="1"/>
         <CursorPos X="3" Y="18"/>
-        <UsageCount Value="6"/>
+        <UsageCount Value="5"/>
       </Unit46>
       <Unit47>
         <Filename Value="../pas-tcl/src/tclcmdline.pas"/>
         <UnitName Value="TclCmdLine"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="183"/>
-        <CursorPos X="1" Y="232"/>
-        <UsageCount Value="11"/>
+        <TopLine Value="64"/>
+        <CursorPos X="22" Y="64"/>
+        <UsageCount Value="12"/>
       </Unit47>
       <Unit48>
         <Filename Value="libusb.pas"/>
@@ -417,14 +414,14 @@
         <WindowIndex Value="0"/>
         <TopLine Value="200"/>
         <CursorPos X="1" Y="247"/>
-        <UsageCount Value="33"/>
+        <UsageCount Value="32"/>
       </Unit48>
       <Unit49>
         <Filename Value="/usr/share/fpcsrc/2.6.0/rtl/inc/objpash.inc"/>
         <WindowIndex Value="0"/>
         <TopLine Value="166"/>
         <CursorPos X="23" Y="192"/>
-        <UsageCount Value="7"/>
+        <UsageCount Value="6"/>
       </Unit49>
       <Unit50>
         <Filename Value="../../../libt6/libt6/utils.pas"/>
@@ -432,7 +429,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="187"/>
         <CursorPos X="1" Y="224"/>
-        <UsageCount Value="7"/>
+        <UsageCount Value="6"/>
       </Unit50>
       <Unit51>
         <Filename Value="usbdevicedebug.pas"/>
@@ -440,18 +437,18 @@
         <UnitName Value="USBDeviceDebug"/>
         <EditorIndex Value="1"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="18"/>
-        <CursorPos X="55" Y="70"/>
-        <UsageCount Value="60"/>
+        <TopLine Value="1"/>
+        <CursorPos X="38" Y="39"/>
+        <UsageCount Value="67"/>
         <Loaded Value="True"/>
       </Unit51>
       <Unit52>
         <Filename Value="/usr/share/fpcsrc/2.6.0/rtl/objpas/fgl.pp"/>
         <UnitName Value="fgl"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="219"/>
-        <CursorPos X="1" Y="308"/>
-        <UsageCount Value="7"/>
+        <TopLine Value="1198"/>
+        <CursorPos X="3" Y="1232"/>
+        <UsageCount Value="9"/>
       </Unit52>
       <Unit53>
         <Filename Value="/usr/share/fpcsrc/2.6.0/rtl/objpas/types.pp"/>
@@ -459,134 +456,209 @@
         <WindowIndex Value="0"/>
         <TopLine Value="98"/>
         <CursorPos X="48" Y="124"/>
-        <UsageCount Value="7"/>
+        <UsageCount Value="6"/>
       </Unit53>
       <Unit54>
         <Filename Value="/usr/share/fpcsrc/2.6.0/rtl/objpas/sysutils/filutilh.inc"/>
         <WindowIndex Value="0"/>
         <TopLine Value="58"/>
         <CursorPos X="10" Y="104"/>
-        <UsageCount Value="10"/>
+        <UsageCount Value="9"/>
       </Unit54>
       <Unit55>
         <Filename Value="/usr/share/fpcsrc/2.6.0/rtl/objpas/sysutils/sysutils.inc"/>
         <WindowIndex Value="0"/>
         <TopLine Value="7"/>
         <CursorPos X="7" Y="27"/>
-        <UsageCount Value="10"/>
+        <UsageCount Value="9"/>
       </Unit55>
       <Unit56>
         <Filename Value="/usr/share/fpcsrc/2.6.0/rtl/objpas/classes/classesh.inc"/>
         <WindowIndex Value="0"/>
         <TopLine Value="674"/>
         <CursorPos X="15" Y="700"/>
-        <UsageCount Value="10"/>
+        <UsageCount Value="9"/>
       </Unit56>
       <Unit57>
         <Filename Value="/usr/share/fpcsrc/2.6.0/rtl/objpas/classes/stringl.inc"/>
         <WindowIndex Value="0"/>
         <TopLine Value="1311"/>
         <CursorPos X="3" Y="1314"/>
-        <UsageCount Value="10"/>
+        <UsageCount Value="9"/>
       </Unit57>
+      <Unit58>
+        <Filename Value="../pas-libusb/src/libusb.pas"/>
+        <UnitName Value="LibUsb"/>
+        <EditorIndex Value="2"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="496"/>
+        <CursorPos X="5" Y="496"/>
+        <UsageCount Value="13"/>
+        <Loaded Value="True"/>
+      </Unit58>
+      <Unit59>
+        <Filename Value="../pas-libusb/src/usb.pas"/>
+        <UnitName Value="USB"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="1"/>
+        <CursorPos X="1" Y="1"/>
+        <UsageCount Value="11"/>
+      </Unit59>
+      <Unit60>
+        <Filename Value="../pas-libusb/src/libusboop.pas"/>
+        <UnitName Value="LibUsbOop"/>
+        <IsVisibleTab Value="True"/>
+        <EditorIndex Value="3"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="961"/>
+        <CursorPos X="53" Y="993"/>
+        <UsageCount Value="13"/>
+        <Bookmarks Count="2">
+          <Item0 X="1" Y="794" ID="1"/>
+          <Item1 X="3" Y="560" ID="2"/>
+        </Bookmarks>
+        <Loaded Value="True"/>
+      </Unit60>
+      <Unit61>
+        <Filename Value="../pas-libusb/src/ezusb.pas"/>
+        <UnitName Value="EZUSB"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="15"/>
+        <CursorPos X="31" Y="24"/>
+        <UsageCount Value="10"/>
+      </Unit61>
+      <Unit62>
+        <Filename Value="../pas-libusb/src/libusbutil.pas"/>
+        <UnitName Value="LibUsbUtil"/>
+        <EditorIndex Value="4"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="119"/>
+        <CursorPos X="7" Y="120"/>
+        <UsageCount Value="12"/>
+        <Loaded Value="True"/>
+      </Unit62>
     </Units>
-    <JumpHistory Count="24" HistoryIndex="23">
+    <JumpHistory Count="30" HistoryIndex="29">
       <Position1>
         <Filename Value="eztool.pas"/>
-        <Caret Line="1937" Column="1" TopLine="1924"/>
+        <Caret Line="976" Column="28" TopLine="931"/>
       </Position1>
       <Position2>
         <Filename Value="eztool.pas"/>
-        <Caret Line="1939" Column="1" TopLine="1924"/>
+        <Caret Line="977" Column="60" TopLine="932"/>
       </Position2>
       <Position3>
         <Filename Value="eztool.pas"/>
-        <Caret Line="1951" Column="1" TopLine="1924"/>
+        <Caret Line="978" Column="69" TopLine="933"/>
       </Position3>
       <Position4>
         <Filename Value="eztool.pas"/>
-        <Caret Line="1965" Column="1" TopLine="1924"/>
+        <Caret Line="990" Column="27" TopLine="945"/>
       </Position4>
       <Position5>
         <Filename Value="eztool.pas"/>
-        <Caret Line="1897" Column="1" TopLine="1871"/>
+        <Caret Line="993" Column="35" TopLine="948"/>
       </Position5>
       <Position6>
         <Filename Value="eztool.pas"/>
-        <Caret Line="1898" Column="1" TopLine="1871"/>
+        <Caret Line="994" Column="60" TopLine="949"/>
       </Position6>
       <Position7>
-        <Filename Value="eztool.pas"/>
-        <Caret Line="1899" Column="1" TopLine="1871"/>
+        <Filename Value="../pas-libusb/src/libusboop.pas"/>
+        <Caret Line="516" Column="3" TopLine="476"/>
       </Position7>
       <Position8>
-        <Filename Value="eztool.pas"/>
-        <Caret Line="1931" Column="1" TopLine="1905"/>
+        <Filename Value="../pas-libusb/src/libusboop.pas"/>
+        <Caret Line="1" Column="1" TopLine="1"/>
       </Position8>
       <Position9>
-        <Filename Value="eztool.pas"/>
-        <Caret Line="1967" Column="1" TopLine="1924"/>
+        <Filename Value="../pas-libusb/src/libusboop.pas"/>
+        <Caret Line="164" Column="22" TopLine="119"/>
       </Position9>
       <Position10>
-        <Filename Value="eztool.pas"/>
-        <Caret Line="1969" Column="1" TopLine="1924"/>
+        <Filename Value="../pas-libusb/src/libusboop.pas"/>
+        <Caret Line="977" Column="10" TopLine="932"/>
       </Position10>
       <Position11>
-        <Filename Value="eztool.pas"/>
-        <Caret Line="1892" Column="1" TopLine="1876"/>
+        <Filename Value="../pas-libusb/src/libusboop.pas"/>
+        <Caret Line="1072" Column="35" TopLine="1027"/>
       </Position11>
       <Position12>
-        <Filename Value="eztool.pas"/>
-        <Caret Line="1891" Column="31" TopLine="1865"/>
+        <Filename Value="../pas-libusb/src/libusboop.pas"/>
+        <Caret Line="1074" Column="13" TopLine="1029"/>
       </Position12>
       <Position13>
-        <Filename Value="eztool.pas"/>
-        <Caret Line="1889" Column="3" TopLine="1775"/>
+        <Filename Value="../pas-libusb/src/libusboop.pas"/>
+        <Caret Line="1511" Column="22" TopLine="1476"/>
       </Position13>
       <Position14>
-        <Filename Value="eztool.pas"/>
-        <Caret Line="1949" Column="14" TopLine="1930"/>
+        <Filename Value="../pas-libusb/src/libusboop.pas"/>
+        <Caret Line="1504" Column="1" TopLine="1476"/>
       </Position14>
       <Position15>
-        <Filename Value="eztool.pas"/>
-        <Caret Line="1896" Column="17" TopLine="1868"/>
+        <Filename Value="../pas-libusb/src/libusboop.pas"/>
+        <Caret Line="1" Column="1" TopLine="1"/>
       </Position15>
       <Position16>
-        <Filename Value="eztool.pas"/>
-        <Caret Line="1889" Column="20" TopLine="1868"/>
+        <Filename Value="../pas-libusb/src/libusboop.pas"/>
+        <Caret Line="164" Column="22" TopLine="119"/>
       </Position16>
       <Position17>
-        <Filename Value="eztool.pas"/>
-        <Caret Line="1898" Column="11" TopLine="1868"/>
+        <Filename Value="../pas-libusb/src/libusboop.pas"/>
+        <Caret Line="977" Column="10" TopLine="932"/>
       </Position17>
       <Position18>
-        <Filename Value="eztool.pas"/>
-        <Caret Line="1901" Column="21" TopLine="1875"/>
+        <Filename Value="../pas-libusb/src/libusboop.pas"/>
+        <Caret Line="1072" Column="35" TopLine="1027"/>
       </Position18>
       <Position19>
-        <Filename Value="eztool.pas"/>
-        <Caret Line="209" Column="81" TopLine="183"/>
+        <Filename Value="../pas-libusb/src/libusboop.pas"/>
+        <Caret Line="1076" Column="75" TopLine="1043"/>
       </Position19>
       <Position20>
-        <Filename Value="eztool.pas"/>
-        <Caret Line="1914" Column="23" TopLine="1887"/>
+        <Filename Value="../pas-libusb/src/libusboop.pas"/>
+        <Caret Line="1" Column="1" TopLine="1"/>
       </Position20>
       <Position21>
-        <Filename Value="eztool.pas"/>
-        <Caret Line="1913" Column="1" TopLine="1887"/>
+        <Filename Value="../pas-libusb/src/libusboop.pas"/>
+        <Caret Line="961" Column="36" TopLine="922"/>
       </Position21>
       <Position22>
-        <Filename Value="eztool.pas"/>
-        <Caret Line="1914" Column="25" TopLine="1891"/>
+        <Filename Value="../pas-libusb/src/libusboop.pas"/>
+        <Caret Line="1" Column="1" TopLine="1"/>
       </Position22>
       <Position23>
-        <Filename Value="utils.pas"/>
-        <Caret Line="96" Column="1" TopLine="65"/>
+        <Filename Value="../pas-libusb/src/libusbutil.pas"/>
+        <Caret Line="130" Column="28" TopLine="119"/>
       </Position23>
       <Position24>
-        <Filename Value="eztool.pas"/>
-        <Caret Line="1910" Column="43" TopLine="1891"/>
+        <Filename Value="usbdevicedebug.pas"/>
+        <Caret Line="31" Column="1" TopLine="15"/>
       </Position24>
+      <Position25>
+        <Filename Value="usbdevicedebug.pas"/>
+        <Caret Line="1" Column="1" TopLine="1"/>
+      </Position25>
+      <Position26>
+        <Filename Value="eztool.pas"/>
+        <Caret Line="1001" Column="62" TopLine="956"/>
+      </Position26>
+      <Position27>
+        <Filename Value="device.pas"/>
+        <Caret Line="116" Column="16" TopLine="102"/>
+      </Position27>
+      <Position28>
+        <Filename Value="device.pas"/>
+        <Caret Line="1" Column="1" TopLine="1"/>
+      </Position28>
+      <Position29>
+        <Filename Value="device.pas"/>
+        <Caret Line="120" Column="97" TopLine="75"/>
+      </Position29>
+      <Position30>
+        <Filename Value="usbdevicedebug.pas"/>
+        <Caret Line="102" Column="40" TopLine="58"/>
+      </Position30>
     </JumpHistory>
   </ProjectOptions>
   <CompilerOptions>

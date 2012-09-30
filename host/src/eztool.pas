@@ -204,7 +204,7 @@ Program EZTool;
 {$mode objfpc}{$H+}
 
 Uses
-  Classes, SysUtils, Math, LibUSB, USB, EZUSB, Device, Utils, ReadlineOOP, Tcl, TclOOP, BaseUnix, Unix, TclApp, USBDeviceDebug;
+  Classes, SysUtils, Math, LibUSB, LibUsbOop, LibUsbUtil, EZUSB, Device, Utils, ReadlineOOP, Tcl, TclOOP, BaseUnix, Unix, TclApp, USBDeviceDebug;
 
 Type
 
@@ -216,7 +216,8 @@ Type
   TEZTool = class(TTclApp)
   private
     FMode         : TMode;
-    FEmptyDevice  : TUSBDeviceEZUSB;
+    FContext      : TLibUsbContext;
+    FEmptyDevice  : TLibUsbDeviceEZUSB;
     FEZToolDevice : TEZToolDevice;
     FUserDevice   : TUSBDeviceDebug;
     Procedure SetMode(AMode:TMode;DoEqual:Boolean=true);
@@ -224,7 +225,7 @@ Type
     // internal functions
     Procedure DisconnectAll;
     Procedure ConnectEmpty(AidVendor:Word;AidProduct:Word);
-    Procedure ConnectEZTool(AIsConfigured:Boolean;AidVendorEmpty,AidProductEmpty:Word;AidVendorEztool:Word;AidProductEztool:Word);
+    Procedure ConnectEZTool(AidVendorEmpty,AidProductEmpty:Word;AidVendorEztool:Word;AidProductEztool:Word);
     Procedure ConnectUser(AidVendor:Word;AidProduct:Word);
     Procedure NotifyConnected(AidVendor : Word; AidProduct : Word);
     // common commands
@@ -301,29 +302,31 @@ Begin
   FTCL.SetVar('usbid_eztool',IntToHex(USBVendConf,4)+':'+IntToHex(USBProdConf,4));
 
   // constants (unfortunately, there is no such thing, so we make variables)
-  FTCL.SetVar('USB_CONTROL_IN',            '0x'+IntToHex(USB_ENDPOINT_IN,           2));
-  FTCL.SetVar('USB_CONTROL_OUT',           '0x'+IntToHex(USB_ENDPOINT_OUT,          2));
-  FTCL.SetVar('USB_REQ_GET_STATUS',        '0x'+IntToHex(USB_REQ_GET_STATUS,        2));
-  FTCL.SetVar('USB_REQ_CLEAR_FEATURE',     '0x'+IntToHex(USB_REQ_CLEAR_FEATURE,     2));
-  FTCL.SetVar('USB_REQ_SET_FEATURE',       '0x'+IntToHex(USB_REQ_SET_FEATURE,       2));
-  FTCL.SetVar('USB_REQ_SET_ADDRESS',       '0x'+IntToHex(USB_REQ_SET_ADDRESS,       2));
-  FTCL.SetVar('USB_REQ_GET_DESCRIPTOR',    '0x'+IntToHex(USB_REQ_GET_DESCRIPTOR,    2));
-  FTCL.SetVar('USB_REQ_SET_DESCRIPTOR',    '0x'+IntToHex(USB_REQ_SET_DESCRIPTOR,    2));
-  FTCL.SetVar('USB_REQ_GET_CONFIGURATION', '0x'+IntToHex(USB_REQ_GET_CONFIGURATION, 2));
-  FTCL.SetVar('USB_REQ_SET_CONFIGURATION', '0x'+IntToHex(USB_REQ_SET_CONFIGURATION, 2));
-  FTCL.SetVar('USB_REQ_GET_INTERFACE',     '0x'+IntToHex(USB_REQ_GET_INTERFACE,     2));
-  FTCL.SetVar('USB_REQ_SET_INTERFACE',     '0x'+IntToHex(USB_REQ_SET_INTERFACE,     2));
-  FTCL.SetVar('USB_REQ_SYNCH_FRAME',       '0x'+IntToHex(USB_REQ_SYNCH_FRAME,       2));
-  FTCL.SetVar('USB_TYPE_STANDARD',         '0x'+IntToHex(USB_TYPE_STANDARD,         2));
-  FTCL.SetVar('USB_TYPE_CLASS',            '0x'+IntToHex(USB_TYPE_CLASS,            2));
-  FTCL.SetVar('USB_TYPE_VENDOR',           '0x'+IntToHex(USB_TYPE_VENDOR,           2));
-  FTCL.SetVar('USB_TYPE_RESERVED',         '0x'+IntToHex(USB_TYPE_RESERVED,         2));
-  FTCL.SetVar('USB_RECIP_DEVICE',          '0x'+IntToHex(USB_RECIP_DEVICE,          2));
-  FTCL.SetVar('USB_RECIP_INTERFACE',       '0x'+IntToHex(USB_RECIP_INTERFACE,       2));
-  FTCL.SetVar('USB_RECIP_ENDPOINT',        '0x'+IntToHex(USB_RECIP_ENDPOINT,        2));
-  FTCL.SetVar('USB_RECIP_OTHER',           '0x'+IntToHex(USB_RECIP_OTHER,           2));
+  FTCL.SetVar('LIBUSB_ENDPOINT_IN',               '0x'+IntToHex(LIBUSB_ENDPOINT_IN,               2));
+  FTCL.SetVar('LIBUSB_ENDPOINT_OUT',              '0x'+IntToHex(LIBUSB_ENDPOINT_OUT,              2));
+  FTCL.SetVar('LIBUSB_REQUEST_GET_STATUS',        '0x'+IntToHex(LIBUSB_REQUEST_GET_STATUS,        2));
+  FTCL.SetVar('LIBUSB_REQUEST_CLEAR_FEATURE',     '0x'+IntToHex(LIBUSB_REQUEST_CLEAR_FEATURE,     2));
+  FTCL.SetVar('LIBUSB_REQUEST_SET_FEATURE',       '0x'+IntToHex(LIBUSB_REQUEST_SET_FEATURE,       2));
+  FTCL.SetVar('LIBUSB_REQUEST_SET_ADDRESS',       '0x'+IntToHex(LIBUSB_REQUEST_SET_ADDRESS,       2));
+  FTCL.SetVar('LIBUSB_REQUEST_GET_DESCRIPTOR',    '0x'+IntToHex(LIBUSB_REQUEST_GET_DESCRIPTOR,    2));
+  FTCL.SetVar('LIBUSB_REQUEST_SET_DESCRIPTOR',    '0x'+IntToHex(LIBUSB_REQUEST_SET_DESCRIPTOR,    2));
+  FTCL.SetVar('LIBUSB_REQUEST_GET_CONFIGURATION', '0x'+IntToHex(LIBUSB_REQUEST_GET_CONFIGURATION, 2));
+  FTCL.SetVar('LIBUSB_REQUEST_SET_CONFIGURATION', '0x'+IntToHex(LIBUSB_REQUEST_SET_CONFIGURATION, 2));
+  FTCL.SetVar('LIBUSB_REQUEST_GET_INTERFACE',     '0x'+IntToHex(LIBUSB_REQUEST_GET_INTERFACE,     2));
+  FTCL.SetVar('LIBUSB_REQUEST_SET_INTERFACE',     '0x'+IntToHex(LIBUSB_REQUEST_SET_INTERFACE,     2));
+  FTCL.SetVar('LIBUSB_REQUEST_SYNCH_FRAME',       '0x'+IntToHex(LIBUSB_REQUEST_SYNCH_FRAME,       2));
+  FTCL.SetVar('LIBUSB_REQUEST_TYPE_STANDARD',     '0x'+IntToHex(LIBUSB_REQUEST_TYPE_STANDARD,     2));
+  FTCL.SetVar('LIBUSB_REQUEST_TYPE_CLASS',        '0x'+IntToHex(LIBUSB_REQUEST_TYPE_CLASS,        2));
+  FTCL.SetVar('LIBUSB_REQUEST_TYPE_VENDOR',       '0x'+IntToHex(LIBUSB_REQUEST_TYPE_VENDOR,       2));
+  FTCL.SetVar('LIBUSB_REQUEST_TYPE_RESERVED',     '0x'+IntToHex(LIBUSB_REQUEST_TYPE_RESERVED,     2));
+  FTCL.SetVar('LIBUSB_RECIPIENT_DEVICE',          '0x'+IntToHex(LIBUSB_RECIPIENT_DEVICE,          2));
+  FTCL.SetVar('LIBUSB_RECIPIENT_INTERFACE',       '0x'+IntToHex(LIBUSB_RECIPIENT_INTERFACE,       2));
+  FTCL.SetVar('LIBUSB_RECIPIENT_ENDPOINT',        '0x'+IntToHex(LIBUSB_RECIPIENT_ENDPOINT,        2));
+  FTCL.SetVar('LIBUSB_RECIPIENT_OTHER',           '0x'+IntToHex(LIBUSB_RECIPIENT_OTHER,           2));
 
   SetMode(mdDisconnected);
+
+  FContext := TLibUsbContext.Create;
 End;
 
 Destructor TEZTool.Destroy;
@@ -331,6 +334,7 @@ Begin
   FEmptyDevice.Free;
   FEZToolDevice.Free;
   FUserDevice.Free;
+  FContext.Free;
   inherited Destroy;
 End;
 
@@ -372,14 +376,26 @@ End;
 Procedure TEZTool.ConnectEmpty(AidVendor:Word;AidProduct:Word);
 Begin
   DisconnectAll;
-  FEmptyDevice := TUSBDeviceEZUSB.Create(AidVendor,AidProduct);
+  FEmptyDevice := TLibUsbDeviceEZUSB.Create(FContext,AidVendor,AidProduct);
 End;
 
-Procedure TEZTool.ConnectEZTool(AIsConfigured:Boolean;AidVendorEmpty,AidProductEmpty:Word;AidVendorEztool:Word;AidProductEztool:Word);
+Procedure TEZTool.ConnectEZTool(AidVendorEmpty,AidProductEmpty:Word;AidVendorEztool:Word;AidProductEztool:Word);
+Var MatchEmpty : TLibUsbDeviceMatchVidPid;
 Begin
   DisconnectAll;
   try
-    FEZToolDevice := TEZToolDevice.Create(AIsConfigured,AidVendorEmpty,AidProductEmpty,TEZToolDevice.FindFirmware(Device.FirmwareName,'eztool'),AidVendorEztool,AidProductEztool);
+    if (AidVendorEmpty <> 0) or (AidProductEmpty <> 0) then
+      // unconfigured (=empty) device given -> use a matcher
+      MatchEmpty := TLibUsbDeviceMatchVidPid.Create(FContext,AidVendorEmpty,AidProductEmpty)
+    else
+      // no unconfigured device given -> don't use a matcher, and don't even search for it
+      MatchEmpty := Nil;
+    FEZToolDevice := TEZToolDevice.Create(
+      FContext,
+      MatchEmpty,
+      TEZToolDevice.FindFirmware(Device.FirmwareName,'eztool'),
+      TLibUsbDeviceMatchVidPid.Create(FContext,AidVendorEztool,AidProductEztool));
+    // the two matcher classes are .Free()ed inside the constructor
     WriteLn('Successfully connected to USB device ',IntToHex(AidVendorEztool,4),':',IntToHex(AidProductEztool,4),': ',FEZToolDevice.GetVersion);
   except
     on E : Exception do
@@ -393,7 +409,7 @@ End;
 Procedure TEZTool.ConnectUser(AidVendor:Word;AidProduct:Word);
 Begin
   DisconnectAll;
-  FUserDevice := TUSBDeviceDebug.Create(AidVendor,AidProduct);
+  FUserDevice := TUSBDeviceDebug.Create(FContext,AidVendor,AidProduct);
 End;
 
 Procedure TEZTool.NotifyConnected(AidVendor:Word;AidProduct:Word);
@@ -629,14 +645,14 @@ and end points of the currently connected device.
 lsusb(1ez)
 *)
 Procedure TEZTool.DevInfo(ObjC : Integer; ObjV : PPTcl_Object);
-Var Dev : TUSBDevice;
-    Config : PUSBConfigDescriptor;
+Var Dev : TLibUsbDevice;
+    Config : Plibusb_config_descriptor;
     NumIf,IIf : Integer;
-    TheIf : USB_Interface;
+    TheIf : Plibusb_interface_descriptor;
     NumAlt,IAlt : Integer;
-    TheAlt : USBInterfaceDescriptor;
+    TheAlt : Plibusb_interface_descriptor;
     NumEp,IEp : Integer;
-    TheEP : USBEndpointDescriptor;
+    TheEP : Plibusb_endpoint_descriptor;
 Begin
   CheckMode([mdEmpty,mdEZTool,mdUser]);
   case FMode of
@@ -645,28 +661,27 @@ Begin
     mdUser   : Dev := FUserDevice;
   End;
 
-  Config := Dev.Device^.Config;
-  NumIf := Config^.bNumInterfaces;
-  For IIf := 0 to NumIf-1 do
-    Begin
-      TheIf := Config^.TheInterface^[IIf];
-      NumAlt := TheIf.num_altsetting;
-      For IAlt := 0 to NumAlt-1 do
-        Begin
-          TheAlt := TheIf.altsetting^[IAlt];
-          WriteLn('Interface ',TheAlt.bInterfaceNumber,
-                  ' (Alternate ',TheAlt.bAlternateSetting,')',
-                  ' "',Dev.USBGetString(TheAlt.iInterface),'":');
-          NumEp := TheAlt.bNumEndpoints;
-          For IEp := 0 to NumEP-1 do
+  Config := FContext.GetActiveConfigDescriptor(Dev.Device);
+  // iterate over all interfaces
+  For IIf := 0 to Config^.bNumInterfaces-1 do
+    With Config^._interface^[IIf] do
+      Begin
+        // iterate over all alternate settings
+        For IAlt := 0 to num_altsetting-1 do
+          With altsetting^[IAlt] do
             Begin
-              TheEp := TheAlt.endpoint^[IEp];
-              WriteLn('  EP ',   TheEP.bEndpointAddress and USB_ENDPOINT_ADDRESS_MASK:2,
-                      ' ',Select(TheEP.bEndpointAddress and USB_ENDPOINT_DIR_MASK <> 0,'IN ','OUT'),
-                      ' ',Select(TheEP.bmAttributes and USB_ENDPOINT_TYPE_MASK,['Control','Isochronous','Bulk','Interrupt']));
+              WriteLn('Interface ',bInterfaceNumber,
+                      ' (Alternate ',bAlternateSetting,')',
+                      ' "',Dev.Control.GetString(iInterface),'":');
+              For IEp := 0 to bNumEndpoints-1 do
+                With endpoint^[IEp] do
+                  Begin
+                    WriteLn('  EP ',   bEndpointAddress and LIBUSB_ENDPOINT_ADDRESS_MASK:2,
+                            ' ',Select(bEndpointAddress and LIBUSB_ENDPOINT_DIR_MASK <> 0,'IN ','OUT'),
+                            ' ',Select(bmAttributes     and LIBUSB_TRANSFER_TYPE_MASK,['Control','Isochronous','Bulk','Interrupt']));
+                  End;
             End;
-        End;
-    End;
+      End;
 End;
 
 (*ronn
@@ -817,7 +832,7 @@ Begin
       if not SplitUsbID(FTCL.GetVar('usbid_eztool'),idVendorEztool,idProductEztool) then
         raise Exception.Create('Invalid format of variable $usbid_eztool');
       WriteLn('Searching unconfigured devices with ',IntToHex(idVendorEmpty,4),':',IntToHex(idProductEmpty,4),'...');
-      ConnectEZTool(false,idVendorEmpty,idProductEmpty,idVendorEztool,idProductEztool);
+      ConnectEZTool(idVendorEmpty,idProductEmpty,idVendorEztool,idProductEztool);
       NotifyConnected(idVendorEztool,idProductEztool);
       SetMode(mdEZTool);
     End
@@ -833,7 +848,7 @@ Begin
     Begin
       // connect -eztool [idVendor:idProduct]
       GetUSBIDs('usbid_eztool');
-      ConnectEZTool(true,$0000,$0000,idVendor,idProduct);
+      ConnectEZTool($0000,$0000,idVendor,idProduct);
       NotifyConnected(idVendor,idProduct);
       SetMode(mdEZTool);
     End
@@ -1008,7 +1023,7 @@ Begin
     End
   else
     Begin
-      ConnectEZTool(true,$0000,$0000,idVendor,idProduct);
+      ConnectEZTool($0000,$0000,idVendor,idProduct);
       NotifyConnected(idVendor,idProduct);
       SetMode(mdEZTool);
     End;
@@ -1548,7 +1563,7 @@ This is provided by interface 0, alternate setting 1.
     set CMD_GET_VERSION 0x80
     connect -user 0547:CFAA
     claim 0 1
-    controlmsg [expr $USB_CONTROL_OUT | $USB_TYPE_VENDOR | $USB_RECIP_DEVICE ] \\
+    controlmsg [expr $LIBUSB_ENDPOINT_OUT | $LIBUSB_REQUEST_TYPE_VENDOR | $LIBUSB_RECIPIENT_DEVICE ] \\
                $CMD_GET_VERSION 0 0
     bulkin 2 64
 
@@ -1587,35 +1602,35 @@ Send a control transfer to the USB device. The arguments <bmRequestType>,
 
 You can use the following constants to build the value of <bmRequestType>:
 
-    $USB_CONTROL_IN             = 0x80
-    $USB_CONTROL_OUT            = 0x00
-    $USB_TYPE_STANDARD          = 0x00 << 5
-    $USB_TYPE_CLASS             = 0x01 << 5
-    $USB_TYPE_VENDOR            = 0x02 << 5
-    $USB_TYPE_RESERVED          = 0x03 << 5
-    $USB_RECIP_DEVICE           = 0x00
-    $USB_RECIP_INTERFACE        = 0x01
-    $USB_RECIP_ENDPOINT         = 0x02
-    $USB_RECIP_OTHER            = 0x03
+    $LIBUSB_ENDPOINT_IN             = 0x80
+    $LIBUSB_ENDPOINT_OUT            = 0x00
+    $LIBUSB_REQUEST_TYPE_STANDARD   = 0x00 << 5
+    $LIBUSB_REQUEST_TYPE_CLASS      = 0x01 << 5
+    $LIBUSB_REQUEST_TYPE_VENDOR     = 0x02 << 5
+    $LIBUSB_REQUEST_TYPE_RESERVED   = 0x03 << 5
+    $LIBUSB_RECIPIENT_DEVICE        = 0x00
+    $LIBUSB_RECIPIENT_INTERFACE     = 0x01
+    $LIBUSB_RECIPIENT_ENDPOINT      = 0x02
+    $LIBUSB_RECIPIENT_OTHER         = 0x03
 
 For the standard device USB requests, the following constants are available
 for <bRequest>:
 
-    $USB_REQ_GET_STATUS         = 0x00
-    $USB_REQ_CLEAR_FEATURE      = 0x01
-    $USB_REQ_SET_FEATURE        = 0x03
-    $USB_REQ_SET_ADDRESS        = 0x05
-    $USB_REQ_GET_DESCRIPTOR     = 0x06
-    $USB_REQ_SET_DESCRIPTOR     = 0x07
-    $USB_REQ_GET_CONFIGURATION  = 0x08
-    $USB_REQ_SET_CONFIGURATION  = 0x09
-    $USB_REQ_GET_INTERFACE      = 0x0A
-    $USB_REQ_SET_INTERFACE      = 0x0B
-    $USB_REQ_SYNCH_FRAME        = 0x0C
+    $LIBUSB_REQUEST_GET_STATUS         = 0x00
+    $LIBUSB_REQUEST_CLEAR_FEATURE      = 0x01
+    $LIBUSB_REQUEST_SET_FEATURE        = 0x03
+    $LIBUSB_REQUEST_SET_ADDRESS        = 0x05
+    $LIBUSB_REQUEST_GET_DESCRIPTOR     = 0x06
+    $LIBUSB_REQUEST_SET_DESCRIPTOR     = 0x07
+    $LIBUSB_REQUEST_GET_CONFIGURATION  = 0x08
+    $LIBUSB_REQUEST_SET_CONFIGURATION  = 0x09
+    $LIBUSB_REQUEST_GET_INTERFACE      = 0x0A
+    $LIBUSB_REQUEST_SET_INTERFACE      = 0x0B
+    $LIBUSB_REQUEST_SYNCH_FRAME        = 0x0C
 
 Depending on the value of bit 7 of <bmRequestType>, the transfer is a control
-IN transfer ($USB_CONTROL_IN = 0x80) or a control OUT transfer
-($USB_CONTROL_OUT = 0x00).
+IN transfer ($LIBUSB_ENDPOINT_IN = 0x80) or a control OUT transfer
+($LIBUSB_ENDPOINT_OUT = 0x00).
 
 For control IN transfers you can specify the optional argument <length>. Then
 up to <length> bytes are received with the control transfer in the data phase.
@@ -1624,7 +1639,7 @@ To send data with a control OUT Transfer you can supply additional data bytes
 <b0>, ...
 
 It is not necessary to `claim`(1ez) an interface before using `controlmsg` when
-the control message is sent to the device ($USB_RECIP_DEVICE).
+the control message is sent to the device ($LIBUSB_RECIPIENT_DEVICE).
 
 ## EXAMPLES
 
@@ -1662,7 +1677,7 @@ Begin
   Buf         := Nil;
   Length      := 0;  // default
 
-  OutRequest := (RequestType and USB_ENDPOINT_DIR_MASK = 0);
+  OutRequest := (RequestType and LIBUSB_ENDPOINT_DIR_MASK = 0);
 
   if OutRequest then
     Begin
@@ -1764,7 +1779,7 @@ Begin
   GetMem(Buf,Length);
 
   //WriteLn('EP = ',EP,' IN, Length = ',Length,', Buf = ',IntToHex(PtrUInt(Buf),SizeOf(PtrUInt)*2));
-  Result := FUserDevice.BulkIn(EP or USB_ENDPOINT_IN,Buf^,Length,100);
+  Result := FUserDevice.BulkIn(EP or LIBUSB_ENDPOINT_IN,Buf^,Length,100);
 
   if Result < 0  then
     Begin
@@ -1837,7 +1852,7 @@ Begin
   HexDump($0000,Buf^,Length);
 
   //WriteLn('EP = ',EP,' OUT, Length = ',Length,', Buf = ',IntToHex(PtrUInt(Buf),SizeOf(PtrUInt)*2));
-  Result := FUserDevice.BulkOut(EP or USB_ENDPOINT_OUT,Buf^,Length,100);
+  Result := FUserDevice.BulkOut(EP or LIBUSB_ENDPOINT_OUT,Buf^,Length,100);
 
   if Result < 0  then
     Begin

@@ -5,29 +5,29 @@ Unit USBDeviceDebug;
 Interface
 
 Uses
-  Classes, SysUtils, LibUSB, USB, FGL;
+  Classes, SysUtils, LibUsb, LibUsbOop, FGL;
 
 Type
 
-  TEPList   = specialize TFPGMap<Byte,TUSBEndpoint>;
+  TEPList   = specialize TFPGMap<Byte,TLibUsbEndpoint>;
 
   { TUSBDeviceDebug }
 
-  TUSBDeviceDebug = class(TUSBDevice)
+  TUSBDeviceDebug = class(TLibUsbDevice)
   private
-    FInterface  : TUSBInterface;
+    FInterface  : TLibUsbInterface;
     FEndpoints  : TEPList;
     Procedure FreeInterface;
-    Procedure ClaimInterface(AIntf : PUSBInterfaceDescriptor);
+    Procedure ClaimInterface(AIntf : Plibusb_interface_descriptor);
     Function GetHaveInterface : Boolean;
   public
-    Constructor Create(ADev:PUSBDevice;AConfig:Integer=-1); override;
+    Constructor Create(AContext:TLibUsbContext;ADevice:Plibusb_device); override;
+    Constructor Create(AContext:TLibUsbContext;AVID,APID:Word);
     Destructor  Destroy; override;
     Procedure Claim(AInterface,AAltSetting:Byte);
     Function BulkIn (EP:Byte;Out      Buf;Length:LongInt;Timeout:LongInt) : LongInt;
     Function BulkOut(EP:Byte;ConstRef Buf;Length:LongInt;Timeout:LongInt) : LongInt;
     property HaveInterface : Boolean read GetHaveInterface;
-    property Control : TUSBDeviceControlEndpoint read FControl;
   End;
 
 
@@ -37,11 +37,16 @@ Uses Utils;
 
 { TUSBDeviceDebug }
 
-Constructor TUSBDeviceDebug.Create(ADev : PUSBDevice; AConfig : Integer);
+Constructor TUSBDeviceDebug.Create(AContext:TLibUsbContext;ADevice : Plibusb_device);
 Begin
-  inherited Create(ADev,AConfig);
+  inherited Create(AContext,ADevice);
   FEndpoints  := TEPList.Create;
   FEndpoints.Duplicates := dupError;
+End;
+
+Constructor TUSBDeviceDebug.Create(AContext : TLibUsbContext; AVID, APID : Word);
+Begin
+  inherited;
 End;
 
 Destructor TUSBDeviceDebug.Destroy;
@@ -52,10 +57,10 @@ Begin
 End;
 
 Procedure TUSBDeviceDebug.Claim(AInterface,AAltSetting:Byte);
-Var Intf : PUSBInterfaceDescriptor;
+Var Intf : Plibusb_interface_descriptor;
 Begin
   // find appropriate interface
-  Intf := USBFindInterface(AInterface,AAltSetting,FDevice);
+  Intf := FindInterface(AInterface,AAltSetting);
   // not found?
   if Intf = Nil then
     raise Exception.CreateFmt('Could not find interface %d alt. setting %d',[AInterface,AAltSetting]);
@@ -68,15 +73,15 @@ End;
 Function TUSBDeviceDebug.BulkIn(EP : Byte; Out Buf; Length : LongInt; Timeout : LongInt) : LongInt;
 Begin
   if FEndpoints.IndexOf(EP) < 0 then
-    raise Exception.CreateFmt('Invalid endpoint number %d',[EP and USB_ENDPOINT_ADDRESS_MASK]);
-  Result := (FEndpoints[EP] as TUSBBulkInEndpoint).Recv(Buf,Length,Timeout);
+    raise Exception.CreateFmt('Invalid endpoint number %d',[EP and LIBUSB_ENDPOINT_ADDRESS_MASK]);
+  Result := (FEndpoints[EP] as TLibUsbBulkInEndpoint).Recv(Buf,Length,Timeout);
 End;
 
 Function TUSBDeviceDebug.BulkOut(EP : Byte; ConstRef Buf; Length : LongInt; Timeout : LongInt) : LongInt;
 Begin
   if FEndpoints.IndexOf(EP) < 0 then
-    raise Exception.CreateFmt('Invalid endpoint number %d',[EP and USB_ENDPOINT_ADDRESS_MASK]);
-  Result := (FEndpoints[EP] as TUSBBulkOutEndpoint).Send(Buf,Length,Timeout);
+    raise Exception.CreateFmt('Invalid endpoint number %d',[EP and LIBUSB_ENDPOINT_ADDRESS_MASK]);
+  Result := (FEndpoints[EP] as TLibUsbBulkOutEndpoint).Send(Buf,Length,Timeout);
 End;
 
 Procedure TUSBDeviceDebug.FreeInterface;
@@ -89,43 +94,43 @@ Begin
   FInterface.Free;
 End;
 
-Procedure TUSBDeviceDebug.ClaimInterface(AIntf : PUSBInterfaceDescriptor);
+Procedure TUSBDeviceDebug.ClaimInterface(AIntf : Plibusb_interface_descriptor);
 Var NumEp,IEp : Integer;
-    TheEP     : PUSBEndpointDescriptor;
-    EP        : TUSBEndpoint;
+    TheEP     : Plibusb_endpoint_descriptor;
+    EP        : TLibUsbEndpoint;
 Begin
   // create and claim new interface
-  FInterface := TUSBInterface.Create(Self,AIntf);
+  FInterface := TLibUsbInterface.Create(Self,AIntf);
   // create objects for all endpoints
   WriteLn('Interface ',AIntf^.bInterfaceNumber,
           ' (Alternate ',AIntf^.bAlternateSetting,')',
-          ' "',USBGetString(AIntf^.iInterface),'":');
+          ' "',FControl.GetString(AIntf^.iInterface),'":');
   NumEp := AIntf^.bNumEndpoints;
   For IEp := 0 to NumEP-1 do
     Begin
       TheEp := @AIntf^.endpoint^[IEp];
-      Write('  EP ',   TheEP^.bEndpointAddress and USB_ENDPOINT_ADDRESS_MASK:2,
-            ' ',Select(TheEP^.bEndpointAddress and USB_ENDPOINT_DIR_MASK <> 0,'IN ','OUT'),
-            ' ',Select(TheEP^.bmAttributes and USB_ENDPOINT_TYPE_MASK,['Control','Isochronous','Bulk','Interrupt']));
+      Write('  EP ',   TheEP^.bEndpointAddress and LIBUSB_ENDPOINT_ADDRESS_MASK:2,
+            ' ',Select(TheEP^.bEndpointAddress and LIBUSB_ENDPOINT_DIR_MASK <> 0,'IN ','OUT'),
+            ' ',Select(TheEP^.bmAttributes and LIBUSB_TRANSFER_TYPE_MASK,['Control','Isochronous','Bulk','Interrupt']));
       EP := Nil;
-      if TheEP^.bEndpointAddress and USB_ENDPOINT_DIR_MASK <> 0 then
+      if TheEP^.bEndpointAddress and LIBUSB_ENDPOINT_DIR_MASK <> 0 then
         Begin
           // IN endpoint
-          Case TheEP^.bmAttributes and USB_ENDPOINT_TYPE_MASK of
-            USB_ENDPOINT_TYPE_CONTROL     : ;
-            USB_ENDPOINT_TYPE_ISOCHRONOUS : ;
-            USB_ENDPOINT_TYPE_BULK        : EP := TUSBBulkInEndpoint     .Create(FInterface,TheEP);
-            USB_ENDPOINT_TYPE_INTERRUPT   : EP := TUSBInterruptInEndpoint.Create(FInterface,TheEP);
+          Case TheEP^.bmAttributes and LIBUSB_TRANSFER_TYPE_MASK of
+            LIBUSB_TRANSFER_TYPE_CONTROL     : ;
+            LIBUSB_TRANSFER_TYPE_ISOCHRONOUS : ;
+            LIBUSB_TRANSFER_TYPE_BULK        : EP := TLibUsbBulkInEndpoint     .Create(FInterface,TheEP);
+            LIBUSB_TRANSFER_TYPE_INTERRUPT   : EP := TLibUsbInterruptInEndpoint.Create(FInterface,TheEP);
           End;
         End
       else
         Begin
           // OUT endpoint
-          Case TheEP^.bmAttributes and USB_ENDPOINT_TYPE_MASK of
-            USB_ENDPOINT_TYPE_CONTROL     : ;
-            USB_ENDPOINT_TYPE_ISOCHRONOUS : ;
-            USB_ENDPOINT_TYPE_BULK        : EP := TUSBBulkOutEndpoint     .Create(FInterface,TheEP);
-            USB_ENDPOINT_TYPE_INTERRUPT   : EP := TUSBInterruptOutEndpoint.Create(FInterface,TheEP);
+          Case TheEP^.bmAttributes and LIBUSB_TRANSFER_TYPE_MASK of
+            LIBUSB_TRANSFER_TYPE_CONTROL     : ;
+            LIBUSB_TRANSFER_TYPE_ISOCHRONOUS : ;
+            LIBUSB_TRANSFER_TYPE_BULK        : EP := TLibUsbBulkOutEndpoint     .Create(FInterface,TheEP);
+            LIBUSB_TRANSFER_TYPE_INTERRUPT   : EP := TLibUsbInterruptOutEndpoint.Create(FInterface,TheEP);
           End;
         End;
       if assigned(EP) then
